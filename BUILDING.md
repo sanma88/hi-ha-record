@@ -61,3 +61,14 @@ xcrun stapler validate "target/release/bundle/dmg/Hi-Ha Record_0.6.1_aarch64.dmg
 ```
 
 N’exécuter les étapes de stapling qu’après un statut Apple `Accepted`. Ne pas ajouter de mot de passe dans la ligne de commande, le dépôt ou les journaux.
+
+## Autorisations cochées mais non reconnues
+
+Après le remplacement d’une version signée ad hoc par une version Developer ID, macOS peut conserver une entrée d’autorisation obsolète. Si Accessibilité ou Enregistrement de l’écran reste refusé malgré une case activée et un redémarrage :
+
+1. Quitter Hi-Ha Record.
+2. Dans Réglages Système → Confidentialité et sécurité, ouvrir l’autorisation concernée.
+3. Retirer uniquement l’entrée Hi-Ha Record, puis ajouter à nouveau `/Applications/Hi-Ha Record.app` avec le bouton `+`.
+4. Activer l’autorisation et relancer l’application.
+
+Cette procédure a rétabli les deux autorisations sur le Mac de validation. Elle ne nécessite pas de réinitialiser les autorisations des autres applications. La version 0.6.2 rafraîchit aussi l’état pendant l’écran d’autorisations et au retour de la fenêtre, sans multiplier les vérifications natives simultanées.

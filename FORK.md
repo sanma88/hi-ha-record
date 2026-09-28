@@ -65,3 +65,13 @@ Validation 0.6.1 : vérification Rust de `cap-desktop` et `cap`, TypeScript desk
 - DMG : `Hi-Ha Record_0.6.1_aarch64.dmg`, SHA-256 après stapling : `1f06884f9ea26b44b5fa26b240974f3dc2b6d3b130b1f75f96c76a413a6af533`.
 - Le worker livré refuse effectivement `auth status` avant toute lecture d’identifiants cloud ; le CLI cloud autonome est absent du paquet.
 - Les tests réels de capture et d’export restent à effectuer.
+
+## Accueil et permissions — version 0.6.2
+
+Le fond d’accueil reprend les couleurs prune et lavande de Hi-Ha Voice. L’écran des permissions utilise des variantes claire et sombre plus discrètes. Les nuages et animations de fond amont ont été remplacés par des dégradés CSS locaux.
+
+Les permissions sont vérifiées dès l’ouverture de leur écran, chaque seconde et au retour de la fenêtre, sans attendre un clic sur Grant. Les vérifications périodiques ne se chevauchent plus et leurs résultats sont ignorés après fermeture de l’écran. Trois tests de régression couvrent une autorisation accordée dans Réglages Système, une réponse native lente et une erreur transitoire.
+
+Sur le Mac de validation, les autorisations Accessibilité et Enregistrement de l’écran cochées mais refusées ont été rétablies en retirant puis en ajoutant à nouveau l’application installée dans Réglages Système. Le mainteneur a confirmé que les deux affichent désormais Granted. Le rafraîchissement de l’interface ne répare pas à lui seul ces entrées macOS obsolètes ; la procédure est décrite dans BUILDING.md.
+
+Validation : 11 tests ciblés, TypeScript desktop, Biome ciblé et compilation de l’interface réussis. Le test de l’interface avec Tauri simulé confirme le déblocage de Continuer après un changement d’autorisation sans clic sur Grant ; aucun appel externe n’a été observé pendant ce parcours. Les captures d’écran documentent ce test simulé.

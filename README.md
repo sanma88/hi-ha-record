@@ -16,6 +16,8 @@ L’édition 0.6.1 fonctionne sans compte ni service cloud Cap. Les appels à le
 
 Captures de l’interface compilée, rendue dans un navigateur de test avec les appels natifs simulés. Elles ne valident pas la capture vidéo macOS.
 
+![Accueil Hi-Ha Record](docs/hi-ha-record/startup.png)
+
 - [Thème clair](docs/hi-ha-record/light.png)
 - [Thème sombre](docs/hi-ha-record/dark.png)
 

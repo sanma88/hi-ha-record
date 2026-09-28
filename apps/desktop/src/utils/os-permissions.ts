@@ -8,6 +8,36 @@ export function isPermissionGranted(status?: OSPermissionStatus): boolean {
 	return status === "granted" || status === "notNeeded";
 }
 
+export function createPermissionMonitor(
+	read: () => Promise<OSPermissionsCheck>,
+	onChange: (check: OSPermissionsCheck) => void,
+	onError: (error: unknown) => void,
+) {
+	let disposed = false;
+	let pending = false;
+	const refresh = async () => {
+		if (disposed || pending) return;
+		pending = true;
+		try {
+			const check = await read();
+			if (!disposed) onChange(check);
+		} catch (error) {
+			if (!disposed) onError(error);
+		} finally {
+			pending = false;
+		}
+	};
+	const interval = setInterval(refresh, 1000);
+	void refresh();
+	return {
+		refresh,
+		dispose() {
+			disposed = true;
+			clearInterval(interval);
+		},
+	};
+}
+
 export function permissionStatusFor(
 	check: OSPermissionsCheck,
 	permission: OSPermission,

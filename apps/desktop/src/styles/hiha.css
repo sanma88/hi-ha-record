@@ -143,3 +143,22 @@ select,
 textarea {
 	font-family: "HiHa Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+.hiha-startup-backdrop {
+	background:
+		radial-gradient(ellipse at 12% 10%, #7e7bc4 0%, transparent 55%),
+		radial-gradient(ellipse at 90% 85%, #635e9b 0%, transparent 55%),
+		linear-gradient(135deg, #363b41, #312c46 55%, #1b1e24);
+}
+.hiha-onboarding-backdrop {
+	background:
+		radial-gradient(ellipse at 0% 0%, #cac7e780, transparent 60%),
+		radial-gradient(ellipse at 100% 100%, #b9b5dd70, transparent 60%),
+		var(--gray-1);
+}
+.dark .hiha-onboarding-backdrop {
+	background:
+		radial-gradient(ellipse at 0% 0%, #635e9b45, transparent 60%),
+		radial-gradient(ellipse at 100% 100%, #7e7bc430, transparent 60%),
+		var(--gray-1);
+}

@@ -13,10 +13,12 @@ import {
 	onCleanup,
 	onMount,
 	Show,
+	untrack,
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { generalSettingsStore } from "~/store";
 import {
+	createPermissionMonitor,
 	isPermissionGranted as isPermitted,
 	requestAndVerifyPermission,
 } from "~/utils/os-permissions";
@@ -48,9 +50,6 @@ import IconLucideSave from "~icons/lucide/save";
 import IconLucideShield from "~icons/lucide/shield";
 import IconLucideVolume2 from "~icons/lucide/volume-2";
 import IconLucideVolumeX from "~icons/lucide/volume-x";
-import cloud1 from "../../assets/illustrations/cloud-1.png";
-import cloud2 from "../../assets/illustrations/cloud-2.png";
-import cloud3 from "../../assets/illustrations/cloud-3.png";
 import startupAudio from "../../assets/tears-and-fireflies-adi-goldstein.mp3";
 import { WindowChromeHeader } from "./Context";
 
@@ -190,114 +189,11 @@ function createLoopingPhase(
 }
 
 function OnboardingAmbientBackdrop() {
-	let cloud1Animation: Animation | undefined;
-	let cloud2Animation: Animation | undefined;
-	let cloud3Animation: Animation | undefined;
-
-	const bindCloud1 = (el: HTMLDivElement | null) => {
-		cloud1Animation?.cancel();
-		cloud1Animation = undefined;
-		if (!el) return;
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				cloud1Animation = el.animate(
-					[
-						{ transform: "translate(0, 0)" },
-						{ transform: "translate(-20px, 10px)" },
-						{ transform: "translate(0, 0)" },
-					],
-					{ duration: 30000, iterations: Infinity, easing: "linear" },
-				);
-			});
-		});
-	};
-
-	const bindCloud2 = (el: HTMLDivElement | null) => {
-		cloud2Animation?.cancel();
-		cloud2Animation = undefined;
-		if (!el) return;
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				cloud2Animation = el.animate(
-					[
-						{ transform: "translate(0, 0)" },
-						{ transform: "translate(20px, 10px)" },
-						{ transform: "translate(0, 0)" },
-					],
-					{ duration: 35000, iterations: Infinity, easing: "linear" },
-				);
-			});
-		});
-	};
-
-	const bindCloud3Inner = (el: HTMLDivElement | null) => {
-		cloud3Animation?.cancel();
-		cloud3Animation = undefined;
-		if (!el) return;
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				cloud3Animation = el.animate(
-					[
-						{ transform: "translate(0, 20px)" },
-						{ transform: "translate(2%, 0)" },
-						{ transform: "translate(0, 0)" },
-					],
-					{
-						duration: 60000,
-						iterations: Infinity,
-						easing: "linear",
-						direction: "alternate",
-					},
-				);
-			});
-		});
-	};
-
-	onMount(() => {
-		onCleanup(() => {
-			cloud1Animation?.cancel();
-			cloud2Animation?.cancel();
-			cloud3Animation?.cancel();
-		});
-	});
-
 	return (
 		<div
-			class="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-[0.1]"
+			class="hiha-onboarding-backdrop absolute inset-0 pointer-events-none"
 			aria-hidden="true"
-		>
-			<div class="absolute inset-0 custom-bg" />
-			<div class="startup-grain" />
-			<div
-				ref={bindCloud1}
-				class="absolute top-0 right-0 opacity-70 pointer-events-none z-1"
-			>
-				<img
-					class="startup-cloud-image w-screen md:w-[80vw] -mr-40"
-					src={cloud1}
-					alt=""
-				/>
-			</div>
-			<div
-				ref={bindCloud2}
-				class="absolute top-0 left-0 opacity-70 pointer-events-none z-1"
-			>
-				<img
-					class="startup-cloud-image w-screen md:w-[80vw] -ml-40"
-					src={cloud2}
-					alt=""
-				/>
-			</div>
-			<div class="absolute -bottom-[15%] left-1/2 -translate-x-1/2 opacity-70 pointer-events-none z-1">
-				<div ref={bindCloud3Inner}>
-					<img
-						class="startup-cloud-image w-[180vw] md:w-[180vw]"
-						src={cloud3}
-						alt=""
-					/>
-				</div>
-			</div>
-		</div>
+		/>
 	);
 }
 
@@ -442,43 +338,6 @@ export default function OnboardingPage() {
 			<Show when={ready()}>
 				<style>
 					{`
-					.custom-bg {
-						transition: all 600ms cubic-bezier(0.4, 0, 0.2, 1);
-					}
-					.startup-grain {
-						position: absolute;
-						top: -150%;
-						left: -50%;
-						right: -50%;
-						bottom: -150%;
-						width: 200%;
-						height: 400%;
-						background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-						pointer-events: none;
-						opacity: 0.5;
-						z-index: 200;
-						mix-blend-mode: overlay;
-					}
-					.startup-cloud-transition {
-						transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1),
-							opacity 600ms cubic-bezier(0.4, 0, 0.2, 1) !important;
-					}
-					.startup-cloud-1.exiting {
-						transform: translate(-200px, -150px) !important;
-						opacity: 0 !important;
-					}
-					.startup-cloud-2.exiting {
-						transform: translate(200px, -150px) !important;
-						opacity: 0 !important;
-					}
-					.startup-cloud-3.exiting {
-						transform: translate(-50%, 200px) !important;
-						opacity: 0 !important;
-					}
-					.startup-cloud-image {
-						max-width: 100vw;
-						height: auto;
-					}
 					@keyframes bounce {
 						0%, 100% { transform: translateY(0); }
 						50% { transform: translateY(-20px); }
@@ -1700,9 +1559,6 @@ function StartupOverlay(props: {
 	);
 
 	let audioEl: HTMLAudioElement | undefined;
-	let cloud1Animation: Animation | undefined;
-	let cloud2Animation: Animation | undefined;
-	let cloud3Animation: Animation | undefined;
 
 	const [isLogoAnimating, setIsLogoAnimating] = createSignal(false);
 
@@ -1711,65 +1567,6 @@ function StartupOverlay(props: {
 			setIsLogoAnimating(true);
 			setTimeout(() => setIsLogoAnimating(false), 1000);
 		}
-	};
-
-	const bindCloud1 = (el: HTMLDivElement | null) => {
-		cloud1Animation?.cancel();
-		cloud1Animation = undefined;
-		if (!el) return;
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				cloud1Animation = el.animate(
-					[
-						{ transform: "translate(0, 0)" },
-						{ transform: "translate(-20px, 10px)" },
-						{ transform: "translate(0, 0)" },
-					],
-					{ duration: 30000, iterations: Infinity, easing: "linear" },
-				);
-			});
-		});
-	};
-
-	const bindCloud2 = (el: HTMLDivElement | null) => {
-		cloud2Animation?.cancel();
-		cloud2Animation = undefined;
-		if (!el) return;
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				cloud2Animation = el.animate(
-					[
-						{ transform: "translate(0, 0)" },
-						{ transform: "translate(20px, 10px)" },
-						{ transform: "translate(0, 0)" },
-					],
-					{ duration: 35000, iterations: Infinity, easing: "linear" },
-				);
-			});
-		});
-	};
-
-	const bindCloud3Inner = (el: HTMLDivElement | null) => {
-		cloud3Animation?.cancel();
-		cloud3Animation = undefined;
-		if (!el) return;
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				cloud3Animation = el.animate(
-					[
-						{ transform: "translate(0, 20px)" },
-						{ transform: "translate(2%, 0)" },
-						{ transform: "translate(0, 0)" },
-					],
-					{
-						duration: 60000,
-						iterations: 1,
-						easing: "cubic-bezier(0.4, 0, 0.2, 1)",
-						fill: "forwards",
-					},
-				);
-			});
-		});
 	};
 
 	onMount(() => {
@@ -1789,9 +1586,6 @@ function StartupOverlay(props: {
 
 		onCleanup(() => {
 			window.removeEventListener("pointerdown", resumeAudio);
-			cloud1Animation?.cancel();
-			cloud2Animation?.cancel();
-			cloud3Animation?.cancel();
 			audioEl?.pause();
 			audioEl = undefined;
 		});
@@ -1807,9 +1601,6 @@ function StartupOverlay(props: {
 	};
 
 	const handleGetStarted = () => {
-		cloud1Animation?.cancel();
-		cloud2Animation?.cancel();
-		cloud3Animation?.cancel();
 		props.onGetStarted();
 	};
 
@@ -1828,12 +1619,10 @@ function StartupOverlay(props: {
 	return (
 		<div
 			class={cx(
-				"absolute inset-0 z-50 flex flex-col min-h-full h-full overflow-hidden custom-bg transition-all duration-600 text-solid-white bg-white",
+				"absolute inset-0 z-50 flex flex-col min-h-full h-full overflow-hidden hiha-startup-backdrop transition-all duration-600 text-solid-white",
 				props.isExiting && "opacity-0 scale-105 pointer-events-none",
 			)}
 		>
-			<div class="startup-grain" />
-
 			<div
 				class="absolute top-3 z-210"
 				style={{
@@ -1857,47 +1646,6 @@ function StartupOverlay(props: {
 			</div>
 
 			<div
-				ref={bindCloud1}
-				class={cx(
-					"absolute top-0 right-0 opacity-70 pointer-events-none startup-cloud-1 z-1",
-					props.isExiting && "startup-cloud-transition exiting",
-				)}
-			>
-				<img
-					class="startup-cloud-image w-screen md:w-[80vw] -mr-40"
-					src={cloud1}
-					alt=""
-				/>
-			</div>
-			<div
-				ref={bindCloud2}
-				class={cx(
-					"absolute top-0 left-0 opacity-70 pointer-events-none startup-cloud-2 z-1",
-					props.isExiting && "startup-cloud-transition exiting",
-				)}
-			>
-				<img
-					class="startup-cloud-image w-screen md:w-[80vw] -ml-40"
-					src={cloud2}
-					alt=""
-				/>
-			</div>
-			<div
-				class={cx(
-					"absolute -bottom-[15%] left-1/2 -translate-x-1/2 opacity-70 pointer-events-none z-1",
-					props.isExiting && "startup-cloud-transition startup-cloud-3 exiting",
-				)}
-			>
-				<div ref={bindCloud3Inner}>
-					<img
-						class="startup-cloud-image w-[180vw] md:w-[180vw]"
-						src={cloud3}
-						alt=""
-					/>
-				</div>
-			</div>
-
-			<div
 				class={cx(
 					"flex flex-col items-center justify-center flex-1 relative px-4 z-5",
 					props.isExiting && "opacity-0 scale-[1.1]",
@@ -1917,7 +1665,7 @@ function StartupOverlay(props: {
 						Bienvenue dans Hi-Ha Record
 					</h1>
 					<p class="text-xl md:text-2xl opacity-80 mx-auto drop-shadow-[0_0_20px_rgba(0,0,0,0.2)] whitespace-nowrap">
-						Beautiful screen recordings, owned by you.
+						Vos formations prennent vie, en toute liberté.
 					</p>
 				</div>
 
@@ -1927,11 +1675,11 @@ function StartupOverlay(props: {
 					size="lg"
 					onClick={handleGetStarted}
 				>
-					<span>Get Started</span>
+					<span>Commencer</span>
 					<span class="text-[11px] font-normal text-[rgba(22,27,38,0.58)] leading-tight inline-flex items-center justify-center gap-1">
-						<span>Click here, or press</span>
+						<span>Cliquez ici ou appuyez sur</span>
 						<kbd class="rounded border border-gray-6 bg-white dark:bg-gray-3 px-1 py-px text-[10px] font-medium text-gray-11 shadow-[0_1px_0_rgba(0,0,0,0.04)]">
-							Space
+							Espace
 						</kbd>
 					</span>
 				</Button>
@@ -1951,14 +1699,8 @@ function PermissionsStep(props: {
 		Record<string, OSPermissionStatus> | undefined
 	>(undefined);
 
-	const fetchPermissions = async () => {
-		const result = await commands.doPermissionsCheck(initialCheck());
-		setCheck(result as unknown as Record<string, OSPermissionStatus>);
-	};
-
-	onMount(() => {
-		fetchPermissions();
-	});
+	let refreshPermissions = () => {};
+	const fetchPermissions = () => refreshPermissions();
 
 	createEffect(() => {
 		if (props.active) {
@@ -1971,10 +1713,24 @@ function PermissionsStep(props: {
 	});
 
 	createEffect(() => {
-		if (props.active && !initialCheck()) {
-			const interval = setInterval(fetchPermissions, 250);
-			onCleanup(() => clearInterval(interval));
-		}
+		if (!props.active) return;
+		const monitor = createPermissionMonitor(
+			() => commands.doPermissionsCheck(untrack(initialCheck)),
+			(result) => setCheck(result),
+			(error) => console.error("Unable to refresh permissions", error),
+		);
+		refreshPermissions = monitor.refresh;
+		const onVisibilityChange = () => {
+			if (!document.hidden) monitor.refresh();
+		};
+		window.addEventListener("focus", monitor.refresh);
+		document.addEventListener("visibilitychange", onVisibilityChange);
+		onCleanup(() => {
+			monitor.dispose();
+			refreshPermissions = () => {};
+			window.removeEventListener("focus", monitor.refresh);
+			document.removeEventListener("visibilitychange", onVisibilityChange);
+		});
 	});
 
 	createEffect(() => {
@@ -2036,7 +1792,7 @@ function PermissionsStep(props: {
 			}
 		} catch (err) {
 			console.error(`Error requesting permission: ${err}`);
-			fetchPermissions().catch(() => {});
+			fetchPermissions();
 		} finally {
 			setRequestingPermission(false);
 		}

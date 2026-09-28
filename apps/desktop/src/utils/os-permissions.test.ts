@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import {
+	createPermissionMonitor,
 	isPermissionGranted,
 	permissionStatusFor,
 	requestAndVerifyPermission,
@@ -92,5 +93,77 @@ describe("os-permissions", () => {
 		expect(client.openPermissionSettings).toHaveBeenCalledWith("accessibility");
 		expect(result.status).toBe("denied");
 		expect(result.openedSettings).toBe(true);
+	});
+});
+
+describe("permission monitoring", () => {
+	const denied = {
+		screenRecording: "denied",
+		accessibility: "denied",
+		microphone: "granted",
+		camera: "granted",
+	} as const;
+
+	it("detects permissions granted in Settings without a Grant click", async () => {
+		vi.useFakeTimers();
+		const granted = { ...denied, accessibility: "granted" } as const;
+		const read = vi
+			.fn()
+			.mockResolvedValueOnce(denied)
+			.mockResolvedValue(granted);
+		const changed = vi.fn();
+		const monitor = createPermissionMonitor(read, changed, vi.fn());
+		try {
+			await vi.advanceTimersByTimeAsync(0);
+			expect(changed).toHaveBeenLastCalledWith(denied);
+			await vi.advanceTimersByTimeAsync(1000);
+			expect(changed).toHaveBeenLastCalledWith(granted);
+		} finally {
+			monitor.dispose();
+			vi.useRealTimers();
+		}
+	});
+
+	it("serializes slow native checks and ignores results after disposal", async () => {
+		vi.useFakeTimers();
+		let resolve!: (value: typeof denied) => void;
+		const read = vi.fn(
+			() =>
+				new Promise<typeof denied>((done) => {
+					resolve = done;
+				}),
+		);
+		const changed = vi.fn();
+		const monitor = createPermissionMonitor(read, changed, vi.fn());
+		try {
+			await vi.advanceTimersByTimeAsync(5000);
+			await monitor.refresh();
+			expect(read).toHaveBeenCalledTimes(1);
+			monitor.dispose();
+			resolve(denied);
+			await vi.advanceTimersByTimeAsync(5000);
+			expect(changed).not.toHaveBeenCalled();
+			expect(read).toHaveBeenCalledTimes(1);
+		} finally {
+			monitor.dispose();
+			vi.useRealTimers();
+		}
+	});
+
+	it("recovers after a failed native check", async () => {
+		vi.useFakeTimers();
+		const error = new Error("temporarily unavailable");
+		const read = vi.fn().mockRejectedValueOnce(error).mockResolvedValue(denied);
+		const failed = vi.fn();
+		const changed = vi.fn();
+		const monitor = createPermissionMonitor(read, changed, failed);
+		try {
+			await vi.advanceTimersByTimeAsync(1000);
+			expect(failed).toHaveBeenCalledWith(error);
+			expect(changed).toHaveBeenCalledWith(denied);
+		} finally {
+			monitor.dispose();
+			vi.useRealTimers();
+		}
 	});
 });
