@@ -1,202 +1,50 @@
-<p align="center">
-	<img width="150" height="150" src="https://github.com/CapSoftware/Cap/blob/main/apps/desktop/src-tauri/icons/Square310x310Logo.png" alt="Cap logo">
-</p>
+# Hi-Ha. record
 
-<h1 align="center">Cap</h1>
+Version personnalisée de [Cap](https://github.com/CapSoftware/Cap), destinée à enregistrer et monter des vidéos de formation sur macOS, puis à les exporter localement.
 
-<p align="center">
-	Beautiful, shareable screen recordings. Open source, fast, and built for teams that want to own their data.
-</p>
+Projet indépendant de Cap Software, Inc. Le nom du projet est **Hi-Ha. record** ; le logiciel amont conserve pour le moment son interface et ses icônes Cap.
 
-<p align="center">
-	<a href="https://cap.so">Website</a>
-	 |
-	<a href="https://cap.so/download">Download</a>
-	 |
-	<a href="https://cap.so/docs">Docs</a>
-	 |
-	<a href="https://cap.so/pricing">Pricing</a>
-	 |
-	<a href="https://cap.link/discord">Discord</a>
-</p>
+## État du projet
 
-<p align="center">
-	<a href="https://console.algora.io/org/CapSoftware/bounties?status=open">
-		<img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fconsole.algora.io%2Fapi%2Fshields%2FCapSoftware%2Fbounties%3Fstatus%3Dopen" alt="Open bounties">
-	</a>
-</p>
+Dépôt initialisé le 28 septembre 2026. **Aucune application Hi-Ha. record compilée, signée ou prête à installer n’est encore publiée.**
 
-<img src="https://raw.githubusercontent.com/CapSoftware/Cap/refs/heads/main/apps/web/public/landing-cover.png" alt="Cap app preview">
+- Code source de Cap conservé avec son historique GitHub et ses licences.
+- Version de départ : [`20c224073bece3fbebed8acb631bd2df97cd6f40`](https://github.com/CapSoftware/Cap/commit/20c224073bece3fbebed8acb631bd2df97cd6f40).
+- Aucun changement fonctionnel effectué à ce stade.
+- Compilation et essai d’enregistrement encore à effectuer.
 
-Cap is the open source alternative to Loom. It gives you fast screen recording, polished local editing, instant share links, comments, transcripts, analytics, team workspaces, custom domains, custom S3 storage, and full self-hosting when you need complete control.
+Voir [FORK.md](FORK.md) pour la provenance, les vérifications et les étapes restantes. La [documentation amont](README.upstream.md) décrit le fonctionnement de Cap ; ses liens de téléchargement conduisent aux applications officielles de Cap, pas à une version de ce projet.
 
-Use Cap for product demos, bug reports, onboarding, tutorials, design reviews, engineering walkthroughs, async standups, client updates, and any moment where showing the work is faster than scheduling another call.
+## Objectif
 
-## Why Cap
+Enregistrer l’écran, le microphone et éventuellement la caméra pour produire des formations payantes. Le premier objectif est une application Mac avec enregistrement, montage et export local, distribuable directement après signature et notarisation Apple.
 
-- **Record, edit, share.** Capture your screen, camera, and microphone, then share a link or export a finished video.
-- **Instant Mode for speed.** Upload while recording and get a shareable link the moment you stop.
-- **Studio Mode for polish.** Record locally, edit with backgrounds, zooms, trimming, captions, and export controls.
-- **Desktop apps for your team.** Cap runs on macOS and Windows, with a web dashboard for viewing, sharing, and managing recordings.
-- **Own your storage.** Use Cap Cloud, connect your own S3-compatible bucket, keep recordings local, or self-host the full platform.
-- **Privacy by default.** Share publicly or privately, add passwords, use your own domain, or keep sensitive recordings off hosted infrastructure.
-- **Async collaboration.** Comments, reactions, transcripts, viewer analytics, and team workspaces keep feedback attached to the video.
-- **Cap AI.** Generate titles, summaries, clickable chapters, captions, and transcripts automatically.
-- **Move from Loom.** Import existing Loom videos into Cap and keep your library in one place.
+Les services hébergés de Cap ne sont pas fournis par ce dépôt. Le code amont comporte encore ses connexions réseau, sa télémétrie, ses liens commerciaux et son système de mise à jour : leur adaptation reste à faire avant de proposer une application indépendante.
 
-## Recording Modes
+## Licence et attribution
 
-| Mode | Best for | How it works |
-| --- | --- | --- |
-| Instant Mode | Fast feedback, bug reports, async updates | Cap uploads while you record, then gives you a share link as soon as recording stops. |
-| Studio Mode | Product demos, tutorials, launches, client work | Cap records locally, opens the editor, and lets you export or share a polished video. |
+Copyright du code d’origine : Cap Software, Inc. et les contributeurs concernés. Les modifications de ce fork sont identifiées dans l’historique Git.
 
-## Data Ownership
+- [AGPLv3](LICENSE) pour le code couvert par la licence principale.
+- [MIT](licenses/LICENSE-MIT) pour les familles de crates `cap-camera*` et `scap-*`, selon la licence du dépôt.
+- Licences propres aux composants tiers, à conserver et vérifier lors de la préparation des binaires.
 
-Cap is designed for people and teams who do not want their recording workflow locked inside a black box.
+La [documentation commerciale de Cap](apps/web/content/docs/commercial-license.mdx) précise que sa licence commerciale concerne les binaires distribués par Cap et ne s’applique pas aux versions compilées soi-même depuis les sources. Ces dernières restent soumises aux licences du code utilisé.
 
-- Use Cap Cloud for the fastest hosted experience.
-- Connect AWS S3, Cloudflare R2, Backblaze B2, MinIO, Wasabi, or another S3-compatible provider.
-- Serve share pages from your own domain.
-- Self-host Cap Web, the API, database, media server, and object storage with Docker Compose.
-- Point Cap Desktop at your self-hosted instance from `Settings > Cap Server URL`.
+Les vidéos originales enregistrées avec le logiciel ne deviennent pas AGPL du seul fait de leur enregistrement. En cas de partage de l’application, même gratuit, fournir le code source correspondant et respecter les obligations des licences applicables.
 
-## Get Started
+## Préparer la compilation
 
-For most users, the fastest path is:
+Prérequis annoncés par le projet : Node.js 20+, Bun 1.4.0, Rust (outil fixé à 1.88.0 par `rust-toolchain.toml`) et les outils Apple nécessaires à la compilation macOS. Docker est nécessaire pour la pile web complète ; le besoin exact du parcours local sera vérifié lors de la première compilation.
 
-1. Download Cap for macOS or Windows from [cap.so/download](https://cap.so/download).
-2. Sign in or create an account.
-3. Choose Instant Mode or Studio Mode.
-4. Record your first Cap.
-5. Share the link, export the file, or keep it local.
-
-The full product docs live at [cap.so/docs](https://cap.so/docs).
-
-## Self-Hosting
-
-The fastest way to self-host Cap Web is Docker Compose:
-
-```bash
-git clone https://github.com/CapSoftware/Cap.git
-cd Cap
-docker compose up -d
-```
-
-Cap will be available at `http://localhost:3000`.
-
-Login links appear in the service logs when email is not configured:
-
-```bash
-docker compose logs cap-web
-```
-
-### Deployment Options
-
-| Method | Best for |
-| --- | --- |
-| Docker Compose | VPS, home servers, and any Docker-capable host |
-| [Railway](https://railway.com/new/template/PwpGcf) | One-click managed hosting |
-| Coolify | Self-hosted PaaS deployments with `docker-compose.coolify.yml` |
-
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/PwpGcf)
-
-For production, configure public URLs and replace the default secrets before exposing the deployment to the internet:
-
-```bash
-CAP_URL=https://cap.yourdomain.com
-S3_PUBLIC_URL=https://s3.yourdomain.com
-```
-
-See the [self-hosting guide](https://cap.so/docs/self-hosting) for email setup, AI providers, SSL, storage, production hardening, and troubleshooting.
-
-## Local Development
-
-Cap is a Turborepo monorepo with Rust, TypeScript, Tauri, SolidStart, Next.js, Drizzle, MySQL, Tailwind CSS, and shared media crates.
-
-Requirements:
-
-- Node.js 20 or newer
-- Bun 1.4.0
-- Rust 1.88 or newer
-- Docker for MySQL, MinIO, and local services
-
-Install and set up the repo:
-
-```bash
+```sh
+git clone https://github.com/sanma88/hi-ha-record.git
+cd hi-ha-record
 bun install
 bun run env-setup
 bun run cap-setup
 ```
 
-Common commands:
+La commande amont `bun run tauri:build` construit actuellement **Cap** avec sa configuration de production amont. Elle ne constitue pas encore une procédure de livraison Hi-Ha. record. Le profil de compilation indépendant doit être préparé et testé avant publication d’un installateur.
 
-| Command | Purpose |
-| --- | --- |
-| `bun run dev` | Start the full local development stack |
-| `bun run dev:web` | Start the web app without the desktop app |
-| `bun run dev:desktop` | Start the desktop app |
-| `bun run build` | Build the workspace |
-| `bun run tauri:build` | Build the desktop release |
-| `bun run lint` | Run Biome linting |
-| `bun run format` | Format with Biome |
-| `bun run typecheck` | Run TypeScript project references |
-| `cargo test -p <crate>` | Run Rust tests for a crate |
-
-Database commands:
-
-| Command | Purpose |
-| --- | --- |
-| `bun run db:generate` | Generate database artifacts |
-| `bun run db:push` | Push schema changes |
-| `bun run db:studio` | Open Drizzle Studio |
-
-## Repository Map
-
-| Path | What lives there |
-| --- | --- |
-| `apps/desktop` | Tauri v2 desktop app with SolidStart UI and Rust backend |
-| `apps/web` | Next.js web app for marketing, docs, dashboard, sharing, API routes, and auth |
-| `apps/cli` | Rust CLI |
-| `apps/media-server` | Media processing service used by the web app |
-| `apps/discord-bot` | Discord integration |
-| `packages/database` | Drizzle schema and database access |
-| `packages/ui` | Shared React UI |
-| `packages/ui-solid` | Shared Solid UI |
-| `packages/web-backend` | Backend service layer |
-| `packages/web-domain` | Web domain models and types |
-| `packages/env` | Environment validation |
-| `packages/sdk-embed` | Embed SDK |
-| `packages/sdk-recorder` | Recorder SDK |
-| `crates/*` | Recording, capture, camera, audio, encoding, rendering, muxing, export, and test crates |
-| `scripts/*` | Setup, analytics, build, and maintenance tooling |
-| `infra/*` | Infrastructure configuration |
-
-The web API uses Effect and `@effect/platform` HTTP APIs. Desktop capture and export paths are backed by Rust crates for fast recording, rendering, and platform-specific media access.
-
-## Analytics
-
-Cap uses [Tinybird](https://www.tinybird.co) for viewer telemetry dashboards. Set `TINYBIRD_ADMIN_TOKEN` or `TINYBIRD_TOKEN` before running analytics commands.
-
-| Command | Purpose |
-| --- | --- |
-| `bun run analytics:setup` | Deploy Tinybird datasources and pipes from `scripts/analytics/tinybird` |
-| `bun run analytics:check` | Validate that the Tinybird workspace matches the app expectations |
-
-`analytics:setup` can remove Tinybird resources outside the checked-in analytics configuration. Use it only against the workspace you intend to manage from this repo.
-
-## Contributing
-
-Cap is built in public. Issues, pull requests, design feedback, bug reports, docs fixes, and bounties are welcome.
-
-- Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
-- Join the community on [Discord](https://cap.link/discord).
-- Check open bounties on [Algora](https://console.algora.io/org/CapSoftware/bounties?status=open).
-
-## License
-
-Portions of this software are licensed as follows:
-
-- Code in the `cap-camera*` and `scap-*` crate families is licensed under the MIT License. See [licenses/LICENSE-MIT](https://github.com/CapSoftware/Cap/blob/main/licenses/LICENSE-MIT).
-- Third-party components are licensed under the original license provided by their owner.
-- All other content not mentioned above is available under the AGPLv3 license as defined in [LICENSE](https://github.com/CapSoftware/Cap/blob/main/LICENSE).
+Ne jamais versionner les fichiers `.env`, les enregistrements personnels, les clés de signature, les certificats privés ou les identifiants Apple. Aucun de ces éléments n’est nécessaire pour consulter ce dépôt.
