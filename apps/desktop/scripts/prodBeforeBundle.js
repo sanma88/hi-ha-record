@@ -1,12 +1,13 @@
 // @ts-check
 
-import { exec as execCb } from "node:child_process";
+import { exec as execCb, execFile as execFileCb } from "node:child_process";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 
 const exec = promisify(execCb);
+const execFile = promisify(execFileCb);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,6 +16,19 @@ const targetDir = path.join(__dirname, "../../../target");
 
 async function main() {
 	if (process.platform === "darwin") {
+		const identity = process.env.APPLE_SIGNING_IDENTITY;
+		if (identity) {
+			await execFile("codesign", [
+				"--force",
+				"--sign",
+				identity,
+				...(identity === "-" ? [] : ["--timestamp", "--options", "runtime"]),
+				path.join(
+					targetDir,
+					"native-deps/onnxruntime/lib/libonnxruntime.dylib",
+				),
+			]);
+		}
 		const releaseBinary = await findReleaseBinary();
 		if (!releaseBinary) {
 			console.warn("No release binary found for dSYM generation; skipping.");

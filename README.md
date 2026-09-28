@@ -6,7 +6,7 @@ Application macOS pour enregistrer, monter et exporter des vidéos de formation.
 
 ## État
 
-L’interface porte le nom **Hi-Ha Record**, sans point, avec le logo cheval, la police Inter et la palette claire/sombre de Hi-Ha Voice. La compilation native Mac Apple Silicon, la compilation de l’interface et la vérification TypeScript ont réussi. **Aucun installateur signé Developer ID et notarié n’est encore publié.** Un DMG d’essai local a été généré avec une signature ad hoc. Les essais réels de capture et d’export restent à effectuer.
+L’interface porte le nom **Hi-Ha Record**, sans point, avec le logo cheval, la police Inter et la palette claire/sombre de Hi-Ha Voice. La compilation native Mac Apple Silicon, la compilation de l’interface et la vérification TypeScript ont réussi. Le DMG local **0.6.1 pour Apple Silicon** est signé **Developer ID Application: Pixinko (85RMV67598)** et **notarié par Apple**. L’application et le DMG sont acceptés par Gatekeeper. Il remplace le premier DMG 0.6.0 signé ad hoc. Les essais réels de capture et d’export restent à effectuer.
 
 Le parcours local ne demande pas de licence commerciale Hi-Ha Record. Les pages d’achat et d’activation ont été remplacées par « À propos et licences ». Les mises à jour officielles de Cap sont désactivées pour les identifiants de cette application. Le mode Studio est sélectionné par défaut ; le sélecteur principal propose Studio et capture d’écran.
 

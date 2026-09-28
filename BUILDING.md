@@ -29,7 +29,7 @@ bun run cap-setup
 APPLE_SIGNING_IDENTITY=- bun run tauri:build --ci
 ```
 
-Le script de préparation télécharge les bibliothèques multimédias et ONNX dans `target/native-deps`, prépare leur signature locale et génère `.cargo/config.toml`. Les notices ONNX sont jointes au paquet. La compilation Hi-Ha exclut GPUI, dont l’interface amont n’est pas utilisée dans cette édition.
+Le script de préparation télécharge les bibliothèques multimédias et ONNX dans `target/native-deps`, prépare leur signature locale et génère `.cargo/config.toml`. Les notices ONNX sont jointes au paquet. Le hook avant assemblage signe également la bibliothèque ONNX avec `APPLE_SIGNING_IDENTITY` et ajoute un horodatage sécurisé pour une identité Developer ID. La compilation Hi-Ha exclut GPUI, dont l’interface amont n’est pas utilisée dans cette édition.
 
 `APPLE_SIGNING_IDENTITY=-` demande une signature ad hoc pour un essai local. Elle n’est ni une signature Developer ID ni une notarisation Apple. Aucun secret Apple n’est nécessaire pour ce premier assemblage.
 

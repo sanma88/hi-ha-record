@@ -55,3 +55,13 @@ Les workflows GitHub Actions sont hérités de Cap et ne constituent pas encore 
 - Le DMG 0.6.0 précédent ne contient pas ces changements.
 
 Validation 0.6.1 : vérification Rust de `cap-desktop` et `cap`, TypeScript desktop et Biome ciblé réussis. Trois tests de non-régression vérifient l’absence de requête cloud et d’initialisation de la télémétrie malgré une configuration héritée. L’inspection des fichiers JavaScript compilés ne trouve les adresses Cap que dans les modules légaux ; la page légale rendue avec Tauri simulé ne déclenche aucun appel externe. Ces contrôles ne constituent pas un test réseau complet de l’application native.
+
+## Paquet Mac validé — 0.6.1
+
+- Signature : `Developer ID Application: Pixinko (85RMV67598)`, avec horodatage Apple.
+- ONNX est signé dans le hook avant assemblage : Tauri ne signait pas automatiquement cette bibliothèque placée dans Resources.
+- Notarisation Apple acceptée le 28 septembre 2026 : `13d9b657-9eb6-4846-9f24-0a7b3dbc67a5`.
+- Tickets joints et validés ; Gatekeeper accepte l’application et le DMG avec `source=Notarized Developer ID`.
+- DMG : `Hi-Ha Record_0.6.1_aarch64.dmg`, SHA-256 après stapling : `1f06884f9ea26b44b5fa26b240974f3dc2b6d3b130b1f75f96c76a413a6af533`.
+- Le worker livré refuse effectivement `auth status` avant toute lecture d’identifiants cloud ; le CLI cloud autonome est absent du paquet.
+- Les tests réels de capture et d’export restent à effectuer.
