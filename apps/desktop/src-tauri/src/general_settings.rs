@@ -303,9 +303,7 @@ fn default_transcription_hints() -> Vec<String> {
 }
 
 fn default_server_url() -> String {
-    std::option_env!("VITE_SERVER_URL")
-        .unwrap_or("https://cap.so")
-        .to_string()
+    "hiha-record://offline".to_string()
 }
 
 #[derive(Serialize, Deserialize, Type, Debug, Clone)]

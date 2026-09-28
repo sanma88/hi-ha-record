@@ -7323,7 +7323,9 @@ pub async fn run(recording_logging_handle: LoggingHandle, logs_dir: PathBuf) {
             }
 
             {
-                let (server_url, should_update) = if cfg!(debug_assertions)
+                let (server_url, should_update) = if app.config().identifier.starts_with("be.hi-ha.record") {
+                    ("hiha-record://offline".to_string(), true)
+                } else if cfg!(debug_assertions)
                     && let Ok(url) = std::env::var("VITE_SERVER_URL")
                 {
                     (url, true)
@@ -7336,7 +7338,7 @@ pub async fn run(recording_logging_handle: LoggingHandle, logs_dir: PathBuf) {
                 } else {
                     (
                         option_env!("VITE_SERVER_URL")
-                            .unwrap_or("https://cap.so")
+                            .unwrap_or("hiha-record://offline")
                             .to_string(),
                         true,
                     )

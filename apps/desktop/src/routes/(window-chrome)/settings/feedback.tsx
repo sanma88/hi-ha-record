@@ -269,7 +269,9 @@ export default function FeedbackTab() {
 					description="Have questions, want to share ideas, or just hang out? Join the Hi-Ha Record Discord community."
 				>
 					<Button
-						onClick={() => shell.open("https://cap.link/discord")}
+						onClick={() =>
+							shell.open("https://github.com/sanma88/hi-ha-record/issues")
+						}
 						size="md"
 						variant="gray"
 					>

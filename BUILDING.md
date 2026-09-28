@@ -42,3 +42,22 @@ Les résultats se trouvent dans `target/release/bundle/`, ou sous `target/<cible
 Avant de partager publiquement un installateur : effectuer les tests d’enregistrement et d’export sur macOS, vérifier les notices des dépendances embarquées, signer avec un certificat Developer ID valide et notarier. Fournir les sources exactes correspondant au binaire et leurs instructions de construction, conformément aux licences applicables.
 
 Les fichiers `.env`, certificats privés, clés et enregistrements ne doivent pas être ajoutés au dépôt.
+
+## Signature Developer ID et notarisation
+
+Importer dans le trousseau session le certificat Developer ID Application du mainteneur **avec sa clé privée**. Vérifier sa présence avec `security find-identity -v -p codesigning`. Ne pas utiliser un certificat Apple Distribution destiné au Mac App Store pour le DMG direct.
+
+```sh
+APPLE_SIGNING_IDENTITY="Developer ID Application: NOM (TEAMID)" bun run tauri:build --ci
+```
+
+Configurer un profil de notarisation local ; la commande demande le mot de passe pour application de façon interactive :
+
+```sh
+xcrun notarytool store-credentials "HiHaRecord-notary" --apple-id "ADRESSE_APPLE" --team-id "TEAMID"
+xcrun notarytool submit "target/release/bundle/dmg/Hi-Ha Record_0.6.1_aarch64.dmg" --keychain-profile "HiHaRecord-notary" --wait
+xcrun stapler staple "target/release/bundle/dmg/Hi-Ha Record_0.6.1_aarch64.dmg"
+xcrun stapler validate "target/release/bundle/dmg/Hi-Ha Record_0.6.1_aarch64.dmg"
+```
+
+N’exécuter les étapes de stapling qu’après un statut Apple `Accepted`. Ne pas ajouter de mot de passe dans la ligne de commande, le dépôt ou les journaux.

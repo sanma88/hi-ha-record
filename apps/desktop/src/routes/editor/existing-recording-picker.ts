@@ -15,7 +15,7 @@ export const getExistingRecordingPickerOptions = (
 
 	return {
 		defaultPath,
-		filters: [{ name: "Cap Recording", extensions: ["cap"] }],
+		filters: [{ name: "Hi-Ha Record Recording", extensions: ["cap"] }],
 		multiple: false,
 	};
 };

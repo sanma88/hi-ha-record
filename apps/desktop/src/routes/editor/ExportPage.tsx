@@ -107,7 +107,7 @@ export const EXPORT_TO_OPTIONS = [
 		label: "Shareable Link",
 		value: "link",
 		icon: IconCapLink,
-		description: "Share via an external Cap server",
+		description: "Cloud sharing is unavailable",
 	},
 ] as const;
 
@@ -239,7 +239,7 @@ export function ExportPage() {
 	const [cursorOnly, setCursorOnly] = createSignal(false);
 
 	const requiresTransparentExport = () => hasTransparentBackground();
-	const disablesLinkExport = () => hasTransparentBackground() || cursorOnly();
+	const disablesLinkExport = () => true;
 	const shouldUseGifMode = () =>
 		!cursorOnly() &&
 		(hasTransparentBackground() ||
@@ -959,19 +959,15 @@ export function ExportPage() {
 	};
 
 	const destinationOptions = () =>
-		EXPORT_TO_OPTIONS.map((option) => ({
-			value: option.value,
-			label:
-				option.value === "link" && meta().sharing ? "Reupload" : option.label,
-			icon: option.icon,
-			disabled: option.value === "link" && disablesLinkExport(),
-			disabledReason:
-				option.value === "link" && disablesLinkExport()
-					? cursorOnly()
-						? "Cursor-only exports can only be saved to a file or clipboard"
-						: "Transparent exports can only be saved to a file or clipboard"
-					: undefined,
-		}));
+		EXPORT_TO_OPTIONS.filter((option) => option.value !== "link").map(
+			(option) => ({
+				value: option.value,
+				label: option.label,
+				icon: option.icon,
+				disabled: false,
+				disabledReason: undefined,
+			}),
+		);
 
 	const formatOptions = () =>
 		FORMAT_OPTIONS.map((option) => {
@@ -1177,13 +1173,9 @@ export function ExportPage() {
 									);
 								}}
 							/>
-							<Show when={disablesLinkExport()}>
-								<p class="text-[11px] text-ed-text-3">
-									{cursorOnly()
-										? "Cursor-only exports can only be saved to a file or clipboard."
-										: "Transparent exports can only be saved to a file or clipboard."}
-								</p>
-							</Show>
+							<p class="text-[11px] text-ed-text-3">
+								Export local vers un fichier ou le presse-papiers.
+							</p>
 
 							<Show when={settings.exportTo === "link" && meta().sharing}>
 								{(sharing) => (

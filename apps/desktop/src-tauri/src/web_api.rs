@@ -69,9 +69,7 @@ fn apply_env_headers(req: reqwest::RequestBuilder) -> reqwest::RequestBuilder {
 }
 
 fn default_server_url() -> String {
-    option_env!("VITE_SERVER_URL")
-        .unwrap_or("https://cap.so")
-        .to_string()
+    "hiha-record://offline".to_string()
 }
 
 async fn current_server_url<T, R>(manager: &T) -> Result<String, AuthedApiError>
@@ -79,6 +77,9 @@ where
     T: Manager<R> + ?Sized,
     R: Runtime,
 {
+    if manager.config().identifier.starts_with("be.hi-ha.record") {
+        return Ok(default_server_url());
+    }
     let Some(app_state) = manager.try_state::<ArcLock<crate::App>>() else {
         return Err(AuthedApiError::AppStateUnavailable);
     };
@@ -198,6 +199,11 @@ impl<T: Manager<R> + Emitter<R>, R: Runtime> ManagerExt<R> for T {
         path: impl Into<String>,
         build: impl FnOnce(&reqwest::Client, String) -> reqwest::RequestBuilder,
     ) -> Result<reqwest::Response, AuthedApiError> {
+        if self.config().identifier.starts_with("be.hi-ha.record") {
+            return Err(AuthedApiError::Other(
+                "Hi-Ha Record has no cloud service".into(),
+            ));
+        }
         let Some(auth) = AuthStore::get(self.app_handle()).map_err(AuthedApiError::AuthStore)?
         else {
             debug!("Skipping authenticated API request because user is not logged in");

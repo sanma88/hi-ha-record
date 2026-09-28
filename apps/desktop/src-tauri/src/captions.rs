@@ -2151,20 +2151,19 @@ async fn download_whisper_model_to_path(
 ) -> Result<(), String> {
     let model_parts: &[&str] = match model_name {
         "tiny" => &[
-            "https://github.com/CapSoftware/transcription-models/releases/download/whisper-v1/ggml-tiny.bin",
+            "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-tiny.bin",
         ],
         "base" => &[
-            "https://github.com/CapSoftware/transcription-models/releases/download/whisper-v1/ggml-base.bin",
+            "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-base.bin",
         ],
         "small" => &[
-            "https://github.com/CapSoftware/transcription-models/releases/download/whisper-v1/ggml-small.bin",
+            "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-small.bin",
         ],
         "medium" => &[
-            "https://github.com/CapSoftware/transcription-models/releases/download/whisper-v1/ggml-medium.bin.part0",
-            "https://github.com/CapSoftware/transcription-models/releases/download/whisper-v1/ggml-medium.bin.part1",
+            "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-medium.bin",
         ],
         _ => &[
-            "https://github.com/CapSoftware/transcription-models/releases/download/whisper-v1/ggml-tiny.bin",
+            "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-tiny.bin",
         ],
     };
 
@@ -2293,19 +2292,19 @@ const PARAKEET_TDT_INT8_MODEL_FILES: &[(&str, &[&str])] = &[
     (
         "encoder-model.int8.onnx",
         &[
-            "https://github.com/CapSoftware/transcription-models/releases/download/parakeet-tdt-v1/encoder-model.int8.onnx",
+            "https://huggingface.co/altunenes/parakeet-rs/resolve/4d2a8bc71f5c896ec40faa59732e6716295edaf2/tdt/encoder-model.int8.onnx",
         ],
     ),
     (
         "decoder_joint-model.int8.onnx",
         &[
-            "https://github.com/CapSoftware/transcription-models/releases/download/parakeet-tdt-v1/decoder_joint-model.int8.onnx",
+            "https://huggingface.co/altunenes/parakeet-rs/resolve/4d2a8bc71f5c896ec40faa59732e6716295edaf2/tdt/decoder_joint-model.int8.onnx",
         ],
     ),
     (
         "vocab.txt",
         &[
-            "https://github.com/CapSoftware/transcription-models/releases/download/parakeet-tdt-v1/vocab.txt",
+            "https://huggingface.co/altunenes/parakeet-rs/resolve/4d2a8bc71f5c896ec40faa59732e6716295edaf2/tdt/vocab.txt",
         ],
     ),
 ];
@@ -2314,26 +2313,25 @@ const PARAKEET_TDT_FULL_MODEL_FILES: &[(&str, &[&str])] = &[
     (
         "encoder-model.onnx",
         &[
-            "https://github.com/CapSoftware/transcription-models/releases/download/parakeet-tdt-v1/encoder-model.onnx",
+            "https://huggingface.co/altunenes/parakeet-rs/resolve/4d2a8bc71f5c896ec40faa59732e6716295edaf2/tdt/encoder-model.onnx",
         ],
     ),
     (
         "encoder-model.onnx.data",
         &[
-            "https://github.com/CapSoftware/transcription-models/releases/download/parakeet-tdt-v1/encoder-model.onnx.data.part0",
-            "https://github.com/CapSoftware/transcription-models/releases/download/parakeet-tdt-v1/encoder-model.onnx.data.part1",
+            "https://huggingface.co/altunenes/parakeet-rs/resolve/4d2a8bc71f5c896ec40faa59732e6716295edaf2/tdt/encoder-model.onnx.data",
         ],
     ),
     (
         "decoder_joint-model.onnx",
         &[
-            "https://github.com/CapSoftware/transcription-models/releases/download/parakeet-tdt-v1/decoder_joint-model.onnx",
+            "https://huggingface.co/altunenes/parakeet-rs/resolve/4d2a8bc71f5c896ec40faa59732e6716295edaf2/tdt/decoder_joint-model.onnx",
         ],
     ),
     (
         "vocab.txt",
         &[
-            "https://github.com/CapSoftware/transcription-models/releases/download/parakeet-tdt-v1/vocab.txt",
+            "https://huggingface.co/altunenes/parakeet-rs/resolve/4d2a8bc71f5c896ec40faa59732e6716295edaf2/tdt/vocab.txt",
         ],
     ),
 ];
@@ -2352,8 +2350,7 @@ const PARAKEET_KNOWN_PART_SIZES: &[(&str, u64)] = &[
     ("encoder-model.int8.onnx", 652_183_999),
     ("decoder_joint-model.int8.onnx", 18_202_004),
     ("encoder-model.onnx", 41_770_866),
-    ("encoder-model.onnx.data.part0", 1_300_000_000),
-    ("encoder-model.onnx.data.part1", 1_135_420_160),
+    ("encoder-model.onnx.data", 1_300_000_000),
     ("decoder_joint-model.onnx", 72_520_893),
     ("vocab.txt", 93_939),
 ];

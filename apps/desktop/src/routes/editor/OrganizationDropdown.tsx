@@ -370,10 +370,10 @@ export function OrganizationDropdown() {
 	const fallbackDescription = createMemo(() => {
 		const availability = organizationSelection.availability();
 		if (availability === "loading") {
-			return "Fetching organization branding from Cap web.";
+			return "Cloud branding is unavailable.";
 		}
 		if (availability === "unavailable") {
-			return "Organization branding uses live Cap web data. Connect to Cap web to select an organization and use its colours.";
+			return "Hi-Ha Record uses your local branding.";
 		}
 		return "Sign in to select an organization, edit brand colours, and use those colours in Studio.";
 	});

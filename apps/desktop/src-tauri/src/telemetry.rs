@@ -13,13 +13,13 @@ use tracing::debug;
 use crate::auth::AuthStore;
 
 /// Baked in at compile time so self-built binaries send nothing.
-const CLIENT_ID: Option<&str> = option_env!("VITE_OPENPANEL_CLIENT_ID");
+const CLIENT_ID: Option<&str> = None;
 /// `/track` accepts origin-allowlisted requests without a client secret — the
 /// same auth path the webview SDK uses — so no credential ships in the binary.
 /// Must stay on the OpenPanel client's CORS allowlist alongside the webview
 /// origins.
 const ORIGIN: &str = "tauri://localhost";
-const API_URL: Option<&str> = option_env!("VITE_OPENPANEL_API_URL");
+const API_URL: Option<&str> = None;
 const DEFAULT_API_URL: &str = "https://api.openpanel.dev";
 
 #[derive(Debug)]
@@ -386,7 +386,7 @@ pub fn set_server_url(url: &str) {
     *API_SERVER_IS_CAP_CLOUD
         .get_or_init(Default::default)
         .write()
-        .unwrap_or_else(PoisonError::into_inner) = Some(url == "https://cap.so");
+        .unwrap_or_else(PoisonError::into_inner) = Some(url == "hiha-record://offline");
 }
 
 static API_SERVER_IS_CAP_CLOUD: OnceLock<RwLock<Option<bool>>> = OnceLock::new();

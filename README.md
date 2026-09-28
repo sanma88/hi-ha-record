@@ -10,7 +10,7 @@ L’interface porte le nom **Hi-Ha Record**, sans point, avec le logo cheval, la
 
 Le parcours local ne demande pas de licence commerciale Hi-Ha Record. Les pages d’achat et d’activation ont été remplacées par « À propos et licences ». Les mises à jour officielles de Cap sont désactivées pour les identifiants de cette application. Le mode Studio est sélectionné par défaut ; le sélecteur principal propose Studio et capture d’écran.
 
-Les services cloud tiers ne sont pas inclus. Les contrôles d’accès de leurs serveurs restent applicables. Le monorepo conserve les sources web et GPUI amont pour traçabilité ; elles ne constituent pas une offre commerciale Hi-Ha. L’interface native GPUI expérimentale est désactivée dans cette édition.
+L’édition 0.6.1 fonctionne sans compte ni service cloud Cap. Les appels à leur API, la télémétrie et les rapports Sentry sont désactivés. Les modèles de sous-titres sont téléchargés à la demande depuis leurs sources indépendantes sur Hugging Face, puis utilisés localement. Le monorepo conserve les sources web et GPUI amont pour traçabilité ; elles ne constituent pas une offre commerciale Hi-Ha. L’interface native GPUI expérimentale est désactivée dans cette édition.
 
 ## Aperçus
 
@@ -46,4 +46,4 @@ Les configurations Tauri portent les identifiants `be.hi-ha.record` et `be.hi-ha
 
 La signature et la notarisation utilisent le compte Apple du mainteneur. Ne jamais ajouter les certificats privés, clés, fichiers `.env` ou enregistrements personnels au dépôt.
 
-Voir [FORK.md](FORK.md) pour les vérifications et limites connues. Le [README amont conservé](README.upstream.md) décrit Cap et ses services officiels.
+Voir [FORK.md](FORK.md) pour les vérifications et limites connues, et [INDEPENDENCE.md](INDEPENDENCE.md) pour les connexions et attributions. Le [README amont conservé](README.upstream.md) décrit Cap et ses services officiels.

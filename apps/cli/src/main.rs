@@ -463,6 +463,15 @@ fn main() {
     }
 
     let cli = Cli::parse();
+    if !matches!(
+        &cli.command,
+        Some(Commands::Export(_) | Commands::ExportPreview(_) | Commands::Selftest(_))
+    ) {
+        eprintln!(
+            "Hi-Ha Record includes only the local export and diagnostic worker; cloud commands are disabled."
+        );
+        std::process::exit(2);
+    }
     let level_filter = cli.log_level.level_filter();
 
     let registry = tracing_subscriber::registry().with(tracing_subscriber::filter::filter_fn(

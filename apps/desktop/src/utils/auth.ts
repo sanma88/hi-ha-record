@@ -30,6 +30,9 @@ type AuthParams = z.infer<typeof paramsValidator>;
 export function createSignInMutation() {
 	return createMutation(() => ({
 		mutationFn: async (abort: AbortController) => {
+			if (clientEnv.VITE_SERVER_URL === "hiha-record://offline") {
+				throw new Error("Hi-Ha Record ne nécessite aucun compte cloud.");
+			}
 			const session = (await shouldUseLocalServerSession())
 				? await createLocalServerSession(abort.signal)
 				: await createHybridDesktopSession(abort.signal);

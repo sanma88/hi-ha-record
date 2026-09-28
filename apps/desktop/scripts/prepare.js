@@ -103,7 +103,6 @@ export async function createTauriPlatformConfigs(
 	const externalBin = [
 		"binaries/cap-muxer",
 		"binaries/cap-exporter",
-		"binaries/cap-cli",
 		...(includeGpui ? ["binaries/cap-gpui"] : []),
 	];
 	let baseConfig = {};

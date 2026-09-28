@@ -2,7 +2,7 @@ import { contract, orgCustomDomainContract } from "@cap/web-api-contract";
 import { fetch } from "@tauri-apps/plugin-http";
 import { type ApiFetcher, initClient } from "@ts-rest/core";
 
-import { authStore, generalSettingsStore } from "~/store";
+import { authStore } from "~/store";
 import { clientEnv } from "./env";
 import { resolveServerRequestPath } from "./server-url-routing";
 
@@ -10,9 +10,7 @@ const isJsonContentType = (contentType: string | null) =>
 	contentType?.toLowerCase().split(";")[0]?.trim() === "application/json";
 
 export async function getConfiguredServerUrl() {
-	return (
-		(await generalSettingsStore.get())?.serverUrl ?? clientEnv.VITE_SERVER_URL
-	);
+	return clientEnv.VITE_SERVER_URL;
 }
 
 async function resolveRequestPath(path: string) {
@@ -21,6 +19,11 @@ async function resolveRequestPath(path: string) {
 }
 
 const api: ApiFetcher = async (args) => {
+	if (clientEnv.VITE_SERVER_URL === "hiha-record://offline") {
+		throw new Error(
+			"Hi-Ha Record fonctionne localement, sans compte ni service cloud.",
+		);
+	}
 	const bypassSecret = import.meta.env.VITE_VERCEL_AUTOMATION_BYPASS_SECRET;
 	if (bypassSecret) args.headers["x-vercel-protection-bypass"] = bypassSecret;
 
@@ -68,8 +71,6 @@ export async function maybeProtectedHeaders() {
 export async function protectedHeaders() {
 	const { authorization } = await maybeProtectedHeaders();
 	if (!authorization)
-		throw new Error(
-			"Please sign in to continue. Alternatively, email hello@cap.so or join our Discord at cap.link/discord",
-		);
+		throw new Error("Aucun compte cloud n’est utilisé dans Hi-Ha Record.");
 	return { authorization };
 }

@@ -303,7 +303,7 @@ function OnboardingAmbientBackdrop() {
 
 export default function OnboardingPage() {
 	const isMacOS = createMemo(() => ostype() === "macos");
-	const minStep = createMemo(() => (isMacOS() ? 0 : 1));
+	const minStep = createMemo(() => 0);
 
 	const [step, setStep] = createSignal(minStep());
 	const [showStartupOverlay, setShowStartupOverlay] = createSignal(true);
@@ -344,7 +344,7 @@ export default function OnboardingPage() {
 
 	const totalSteps = createMemo(() => {
 		if (permissionsOnly()) return 1;
-		return 8;
+		return 1;
 	});
 
 	createEffect(() => {
@@ -968,7 +968,7 @@ function ShortcutsStep(props: { active: boolean }) {
 		},
 		{
 			title: "Custom Domain",
-			desc: "Use your own domain for shareable links instead of cap.so",
+			desc: "Use your own domain for shareable links for your links",
 		},
 		{
 			title: "Recording Preferences",
@@ -1089,8 +1089,7 @@ function FaqStep(props: { active: boolean }) {
 				<FaqItem question="Where are my recordings stored?">
 					<p class="text-[13px] text-gray-10 leading-relaxed">
 						All recordings are stored locally on your computer. In Instant mode,
-						they're also uploaded to an external Cap server for easy sharing.
-						You can manage storage in Settings.
+						they stay on your computer. You can manage storage in Settings.
 					</p>
 				</FaqItem>
 				<FaqItem question="Can I change my shortcuts later?">
@@ -1103,7 +1102,7 @@ function FaqStep(props: { active: boolean }) {
 					<p class="text-[13px] text-gray-10 leading-relaxed">
 						In Instant mode, you get a shareable link automatically when you
 						stop recording. In Studio mode, export your edited video and share
-						via an external Cap server or save locally.
+						locally on your computer.
 					</p>
 				</FaqItem>
 			</div>
@@ -1437,7 +1436,7 @@ function InstantMockup(props: { active: boolean }) {
 							<div class="flex items-center gap-2 w-full">
 								<div class="flex-1 flex items-center px-3 py-2 rounded-lg bg-white dark:bg-gray-3 border border-gray-4">
 									<span class="text-[11px] text-gray-11 font-mono">
-										cap.so/s/m4k92x
+										hi-ha.be
 									</span>
 								</div>
 								<div
