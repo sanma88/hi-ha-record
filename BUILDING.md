@@ -72,3 +72,18 @@ Après le remplacement d’une version signée ad hoc par une version Developer 
 4. Activer l’autorisation et relancer l’application.
 
 Cette procédure a rétabli les deux autorisations sur le Mac de validation. Elle ne nécessite pas de réinitialiser les autorisations des autres applications. La version 0.6.2 rafraîchit aussi l’état pendant l’écran d’autorisations et au retour de la fenêtre, sans multiplier les vérifications natives simultanées.
+
+## Assemblage alternatif du DMG
+
+Si `bundle_dmg.sh` échoue après signature de l’application, créer une image à partir du paquet signé. Employer un nouveau répertoire temporaire et adapter la version du nom de sortie :
+
+```sh
+image_dir=$(mktemp -d)
+ditto "target/release/bundle/macos/Hi-Ha Record.app" "$image_dir/Hi-Ha Record.app"
+ln -s /Applications "$image_dir/Applications"
+hdiutil create -volname "Hi-Ha Record" -srcfolder "$image_dir" -format UDZO "Hi-Ha-Record-0.6.2-arm64.dmg"
+codesign --force --sign "Developer ID Application: NOM (TEAMID)" --timestamp "Hi-Ha-Record-0.6.2-arm64.dmg"
+xcrun notarytool submit "Hi-Ha-Record-0.6.2-arm64.dmg" --keychain-profile "HiHaRecord-notary" --wait
+```
+
+Après un statut `Accepted`, joindre le ticket avec `xcrun stapler staple`, le vérifier avec `xcrun stapler validate`, puis vérifier Gatekeeper. Calculer le SHA-256 uniquement après le stapling. Ne pas modifier le contenu de l’application après sa signature.

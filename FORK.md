@@ -75,3 +75,15 @@ Les permissions sont vérifiées dès l’ouverture de leur écran, chaque secon
 Sur le Mac de validation, les autorisations Accessibilité et Enregistrement de l’écran cochées mais refusées ont été rétablies en retirant puis en ajoutant à nouveau l’application installée dans Réglages Système. Le mainteneur a confirmé que les deux affichent désormais Granted. Le rafraîchissement de l’interface ne répare pas à lui seul ces entrées macOS obsolètes ; la procédure est décrite dans BUILDING.md.
 
 Validation : 11 tests ciblés, TypeScript desktop, Biome ciblé et compilation de l’interface réussis. Le test de l’interface avec Tauri simulé confirme le déblocage de Continuer après un changement d’autorisation sans clic sur Grant ; aucun appel externe n’a été observé pendant ce parcours. Les captures d’écran documentent ce test simulé.
+
+## Distribution publique — 0.6.2
+
+- Sources du binaire : `0ddf250cc0a05cb553e71a10ec9c97182a99558a`, tag `v0.6.2`.
+- Signature : `Developer ID Application: Pixinko (85RMV67598)`.
+- Notarisation Apple acceptée le 28 septembre 2026 : `986031dc-5986-4426-bf4e-ae9b70616d5f`.
+- Ticket joint au DMG et validé ; Gatekeeper accepte le DMG et l’application montée avec `source=Notarized Developer ID`.
+- DMG final : `Hi-Ha-Record-0.6.2-arm64.dmg`.
+- SHA-256 après stapling : `7f8f3bdb3c4bc07ea63c73ef7f95cf218957cf130c38380bc8898ab6460a2248`.
+- Notices AGPL, MIT, Inter et ONNX présentes dans l’application distribuée.
+- L’assemblage DMG Tauri a échoué ; l’image finale a été créée avec `hdiutil` à partir du paquet signé, avec un raccourci Applications. Voir BUILDING.md.
+- La release GitHub fournit le DMG, une archive des sources exactes et `SHA256SUMS.txt`.
