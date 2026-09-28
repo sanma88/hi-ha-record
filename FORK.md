@@ -95,3 +95,5 @@ La CSP introduite en 0.6.1 définissait `connect-src` sans autoriser les WebSock
 La version 0.6.3 autorise uniquement `ws://localhost:*` et `ws://127.0.0.1:*` pour ces échanges vidéo sur le Mac. L’autorisation générique `ws:` a été retirée de `default-src` ; les services cloud restent désactivés.
 
 Validation : un test WebKit avec serveur WebSocket éphémère reproduit la `SecurityError` avec l’ancienne CSP sur les deux adresses, reçoit une trame avec la nouvelle CSP, et vérifie qu’une adresse externe reste bloquée. Les trois tests de l’édition locale passent. Les pistes écran et caméra d’un enregistrement réel de 7 secondes se décodent ; l’exporteur livré produit un MP4 de 7,3 secondes dont les pistes H.264/AAC sont également décodées sans erreur. Aucun enregistrement personnel n’est joint au dépôt ni à la release.
+
+Distribution 0.6.3 : sources `ac8cd9a54d724a346197f30e898d262964245c56`, notarisation Apple acceptée (`dd4d4e95-aeaa-4349-afa9-0cc4ba161a78`), ticket joint et Gatekeeper validé pour l’application et le DMG. Empreinte SHA-256 du DMG `Hi-Ha-Record-0.6.3-arm64.dmg` : `b20748d007511915f94a802d84aad2c24a5112b628c7f3cccef1766ab0310cda`.
