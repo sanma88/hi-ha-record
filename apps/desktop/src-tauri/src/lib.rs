@@ -5908,12 +5908,6 @@ fn list_screenshots_inner(
 async fn check_upgraded_and_update(app: AppHandle) -> Result<bool, String> {
     println!("Checking upgraded status and updating...");
 
-    if let Ok(Some(settings)) = GeneralSettingsStore::get(&app)
-        && settings.commercial_license.is_some()
-    {
-        return Ok(true);
-    }
-
     let Ok(Some(auth)) = AuthStore::get(&app) else {
         return Ok(false);
     };
@@ -6264,9 +6258,13 @@ async fn editor_delete_project(
 }
 
 async fn open_pricing_page(app: &AppHandle) -> Result<(), String> {
-    app.shell()
-        .open("https://cap.so/pricing?ref=desktop", None)
-        .map_err(|e| e.to_string())
+    ShowCapWindow::Settings {
+        page: Some("license".to_string()),
+    }
+    .show(app)
+    .await
+    .map(|_| ())
+    .map_err(|e| e.to_string())
 }
 
 // keep this async otherwise opening windows may hang on windows
@@ -7952,7 +7950,7 @@ fn handle_single_instance(app: &AppHandle, args: Vec<String>) {
 
     let action_urls = args
         .iter()
-        .filter(|arg| arg.starts_with("cap-desktop://"))
+        .filter(|arg| arg.starts_with("hiha-record://"))
         .filter_map(|arg| tauri::Url::parse(arg).ok())
         .collect::<Vec<_>>();
     if !action_urls.is_empty() {

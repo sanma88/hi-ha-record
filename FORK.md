@@ -1,46 +1,45 @@
-# Provenance et suivi du fork
+# Suivi de Hi-Ha Record
 
-## Base
+## Provenance
 
 - Amont : https://github.com/CapSoftware/Cap
+- Base : `20c224073bece3fbebed8acb631bd2df97cd6f40`
 - Fork : https://github.com/sanma88/hi-ha-record
-- Commit de départ : `20c224073bece3fbebed8acb631bd2df97cd6f40`
-- Date de préparation : 2026-09-28
-- Plateforme initiale : macOS Apple Silicon.
+- Identité graphique : https://github.com/sanma88/hiha-voice-macos
+- Révision graphique : `192e1492f1991dfa030bccbc070a97d7787914fc`
 
-## Modifications du 28 septembre 2026
+## Adaptations du 28 septembre 2026
 
-- Présentation du projet Hi-Ha. record dans `README.md`.
-- Conservation intégrale du README d’origine dans `README.upstream.md`.
-- Ajout du présent document de suivi.
-- Aucun changement du moteur d’enregistrement, de la licence, des crédits, des dépendances ou des configurations de production.
+- Nom Hi-Ha Record, icône Mac et menu, symbole cheval et signature visuelle.
+- Palette Hi-Ha Voice, police Inter embarquée, thèmes clair et sombre.
+- Identifiants, protocole de liens et journaux propres à cette application.
+- Page À propos et licences : AGPLv3 complète accessible hors ligne, attributions, garantie, usage professionnel et lien vers les sources.
+- Notices et licences ajoutées aux ressources à embarquer.
+- Suppression de l’activation des clés, des statuts commerciaux et des liens d’achat dans l’interface desktop. Les anciennes données de licence peuvent encore être lues pour compatibilité du format de stockage, mais elles ne donnent plus de droits dans le code natif.
+- Les demandes d’achat héritées ouvrent les mentions légales. Les autorisations des services cloud externes restent vérifiées côté serveur ; aucun statut Pro fictif n’est créé.
+- Sélecteur principal limité à Studio et captures d’écran ; Studio par défaut.
+- Mises à jour Cap neutralisées côté configuration et côté vérification native.
+- Bascule vers l’application GPUI amont désactivée : son interface distincte n’a pas été adaptée.
 
-## Vérifications effectuées
+## Validation
 
-- Lecture de `LICENSE`, des instructions `AGENTS.md` et de la documentation commerciale amont.
-- La documentation commerciale distingue explicitement les binaires officiels des versions compilées soi-même.
-- Les fichiers de licence restent identiques au commit amont.
-- Lecture des configurations Tauri et des commandes de compilation.
-- Vérification des prérequis locaux : Mac arm64, Node.js 26.8.1, Bun 1.4.2 présent dans `~/.bun/bin` ; la version Bun déclarée par le projet est 1.4.0.
-- Rust/Cargo absent du PATH et du chemin standard `~/.cargo/bin/cargo`.
-- `xcodebuild -version` échoue : le répertoire développeur actif contient uniquement les Command Line Tools. Aucun `Xcode*.app` trouvé dans `/Applications`.
-- Compilation, signature, notarisation et tests d’enregistrement non effectués.
+- Dépendances frontend installées avec Bun 1.4.2, sans scripts d’installation ; version déclarée amont : 1.4.0.
+- Biome sur les fichiers TS/TSX/JS/JSON/CSS modifiés.
+- TypeScript : `tsc --noEmit -p apps/desktop/tsconfig.json`.
+- Compilation frontend : `bun run --cwd apps/desktop build`.
+- Formatage natif : `cargo fmt --all`, avec Rust 1.88.0 installé dans un répertoire temporaire.
+- Aperçus clair/sombre de la page légale compilée : ressources chargées, aucun appel réseau externe observé pour cette page, appels Tauri simulés dans un navigateur de test.
+- Licence principale et licence MIT conservées intégralement.
+- Icône ICNS construite à partir des PNG inchangés de Hi-Ha Voice ; lecture 1024 × 1024 vérifiée avec les outils macOS.
 
-Cette vérification initiale ne constitue pas un audit exhaustif des licences transitives ou des composants multimédias embarqués. Celui-ci devra porter sur les dépendances réellement utilisées dans le binaire final.
+`cargo check -p cap-desktop` reste bloqué dans le script de construction de la dépendance `cidre` : `xcodebuild` exige Xcode complet, alors que seul le répertoire Command Line Tools est actif. Le code natif final n’a donc pas encore été entièrement vérifié par le compilateur.
 
-## Étapes avant un premier installateur
+## Avant un installateur
 
-1. Installer/configurer Xcode complet et Rust, et utiliser la version Bun attendue.
-2. Installer les dépendances et obtenir une compilation reproductible de la base.
-3. Créer un profil Hi-Ha. record : nom, identifiant d’application distinct, icône et mentions légales accessibles.
-4. Adapter ensemble les protocoles de liens, les chemins de données et les intégrations qui supposent l’identité Cap.
-5. Préparer le parcours local ; vérifier les contrôles de licence, les appels réseau, la télémétrie et les liens vers les services Cap.
-6. Désactiver les mises à jour officielles de Cap dans le profil indépendant avant toute distribution.
-7. Vérifier les licences et notices des composants effectivement embarqués, notamment les composants multimédias.
-8. Tester capture écran, microphone, caméra, montage, export et permissions macOS sur un profil de test.
-9. Signer et notarier avec le compte Apple du mainteneur, sans placer de secrets dans Git.
-10. Publier l’installateur avec les sources correspondantes, les instructions de construction et les notices nécessaires.
+1. Installer/configurer Xcode complet et les dépendances multimédias, puis obtenir la compilation native.
+2. Tester réellement capture écran, microphone, caméra, montage, export et permissions sur macOS.
+3. Vérifier les intégrations facultatives et leurs liens de retour : aucun service cloud Hi-Ha n’est déployé.
+4. Compléter l’inventaire des licences des composants effectivement embarqués et les notices correspondantes.
+5. Signer, notarier et publier le binaire avec ses sources exactes et instructions de construction.
 
-## Automatisation
-
-Les workflows GitHub Actions proviennent de Cap. Les examiner avant activation : ils peuvent faire référence à l’infrastructure et aux secrets de l’amont. Aucune chaîne de publication Hi-Ha. record n’a encore été configurée.
+Les workflows GitHub Actions sont hérités de Cap et ne constituent pas encore une chaîne de livraison Hi-Ha. Les examiner avant activation. Les sources web, CLI et GPUI amont restent dans le monorepo ; cette adaptation concerne l’application desktop Tauri sur Mac.

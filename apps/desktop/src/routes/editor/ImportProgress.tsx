@@ -10,14 +10,10 @@ import {
 import IconLucideAlertCircle from "~icons/lucide/alert-circle";
 
 const funMessages = [
-	"Adjusting the Cap just right...",
-	"Putting on our thinking Cap...",
-	"Cap-sizing the pixels...",
-	"Wearing our processing Cap...",
-	"Cap-tivating import in progress...",
-	"Flipping our Cap backwards...",
-	"Cap-puccino break? Almost done...",
-	"Cap-able of great things...",
+	"Préparation de votre vidéo…",
+	"Analyse des pistes audio et vidéo…",
+	"Création du projet Hi-Ha Record…",
+	"Votre espace de montage se prépare…",
 ];
 
 export type ImportProgressProps = {

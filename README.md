@@ -1,41 +1,37 @@
-# Hi-Ha. record
+# Hi-Ha Record
 
-Version personnalisée de [Cap](https://github.com/CapSoftware/Cap), destinée à enregistrer et monter des vidéos de formation sur macOS, puis à les exporter localement.
+![Logo Hi-Ha](apps/desktop/public/brand/app-icon.png)
 
-Projet indépendant de Cap Software, Inc. Le nom du projet est **Hi-Ha. record** ; le logiciel amont conserve pour le moment son interface et ses icônes Cap.
+Application macOS pour enregistrer, monter et exporter des vidéos de formation. Version indépendante de [Cap](https://github.com/CapSoftware/Cap), adaptée à l’identité de [Hi-Ha](https://hi-ha.be).
 
-## État du projet
+## État
 
-Dépôt initialisé le 28 septembre 2026. **Aucune application Hi-Ha. record compilée, signée ou prête à installer n’est encore publiée.**
+L’interface porte le nom **Hi-Ha Record**, sans point, avec le logo cheval, la police Inter et la palette claire/sombre de Hi-Ha Voice. La compilation de l’interface et la vérification TypeScript ont été testées. **Aucun installateur Mac signé n’est encore publié** : la compilation native nécessite Xcode complet.
 
-- Code source de Cap conservé avec son historique GitHub et ses licences.
-- Version de départ : [`20c224073bece3fbebed8acb631bd2df97cd6f40`](https://github.com/CapSoftware/Cap/commit/20c224073bece3fbebed8acb631bd2df97cd6f40).
-- Aucun changement fonctionnel effectué à ce stade.
-- Compilation et essai d’enregistrement encore à effectuer.
+Le parcours local ne demande pas de licence commerciale Hi-Ha Record. Les pages d’achat et d’activation ont été remplacées par « À propos et licences ». Les mises à jour officielles de Cap sont désactivées pour les identifiants de cette application. Le mode Studio est sélectionné par défaut ; le sélecteur principal propose Studio et capture d’écran.
 
-Voir [FORK.md](FORK.md) pour la provenance, les vérifications et les étapes restantes. La [documentation amont](README.upstream.md) décrit le fonctionnement de Cap ; ses liens de téléchargement conduisent aux applications officielles de Cap, pas à une version de ce projet.
+Les services cloud tiers ne sont pas inclus. Les contrôles d’accès de leurs serveurs restent applicables. Le monorepo conserve les sources web et GPUI amont pour traçabilité ; elles ne constituent pas une offre commerciale Hi-Ha. L’interface native GPUI expérimentale est désactivée dans cette édition.
 
-## Objectif
+## Aperçus
 
-Enregistrer l’écran, le microphone et éventuellement la caméra pour produire des formations payantes. Le premier objectif est une application Mac avec enregistrement, montage et export local, distribuable directement après signature et notarisation Apple.
+Captures de l’interface compilée, rendue dans un navigateur de test avec les appels natifs simulés. Elles ne valident pas la capture vidéo macOS.
 
-Les services hébergés de Cap ne sont pas fournis par ce dépôt. Le code amont comporte encore ses connexions réseau, sa télémétrie, ses liens commerciaux et son système de mise à jour : leur adaptation reste à faire avant de proposer une application indépendante.
+- [Thème clair](docs/hi-ha-record/light.png)
+- [Thème sombre](docs/hi-ha-record/dark.png)
 
-## Licence et attribution
+## Licence
 
-Copyright du code d’origine : Cap Software, Inc. et les contributeurs concernés. Les modifications de ce fork sont identifiées dans l’historique Git.
+Copyright © 2023–présent Cap Software, Inc. et contributeurs. Adaptations Hi-Ha : 2026.
 
-- [AGPLv3](LICENSE) pour le code couvert par la licence principale.
-- [MIT](licenses/LICENSE-MIT) pour les familles de crates `cap-camera*` et `scap-*`, selon la licence du dépôt.
-- Licences propres aux composants tiers, à conserver et vérifier lors de la préparation des binaires.
+La licence principale reste l’[AGPLv3](LICENSE). Les familles de crates `cap-camera*` et `scap-*` sont sous [MIT](licenses/LICENSE-MIT). Les autres composants conservent leurs licences. La police Inter est sous [SIL OFL 1.1](licenses/Inter-OFL.txt). Voir [NOTICE.md](NOTICE.md) pour les attributions et obligations.
 
-La [documentation commerciale de Cap](apps/web/content/docs/commercial-license.mdx) précise que sa licence commerciale concerne les binaires distribués par Cap et ne s’applique pas aux versions compilées soi-même depuis les sources. Ces dernières restent soumises aux licences du code utilisé.
+La licence commerciale des binaires officiels de Cap ne s’applique pas aux versions compilées soi-même, selon sa [documentation amont](apps/web/content/docs/commercial-license.mdx). Les licences du code restent applicables. Les vidéos originales ne deviennent pas AGPL du seul fait de leur enregistrement.
 
-Les vidéos originales enregistrées avec le logiciel ne deviennent pas AGPL du seul fait de leur enregistrement. En cas de partage de l’application, même gratuit, fournir le code source correspondant et respecter les obligations des licences applicables.
+Lors du partage de l’application, même gratuit, fournir les sources correspondant exactement au binaire, les instructions de construction et les notices requises. Avant une livraison binaire, compléter l’inventaire des composants effectivement embarqués.
 
-## Préparer la compilation
+## Développement
 
-Prérequis annoncés par le projet : Node.js 20+, Bun 1.4.0, Rust (outil fixé à 1.88.0 par `rust-toolchain.toml`) et les outils Apple nécessaires à la compilation macOS. Docker est nécessaire pour la pile web complète ; le besoin exact du parcours local sera vérifié lors de la première compilation.
+Prérequis : Node.js 20+, Bun 1.4.0 selon le manifeste amont, Rust 1.88.0 selon `rust-toolchain.toml`, et Xcode complet pour macOS. Docker est utilisé par la pile web amont, pas par les contrôles statiques de l’interface.
 
 ```sh
 git clone https://github.com/sanma88/hi-ha-record.git
@@ -43,8 +39,11 @@ cd hi-ha-record
 bun install
 bun run env-setup
 bun run cap-setup
+bun run tauri:build
 ```
 
-La commande amont `bun run tauri:build` construit actuellement **Cap** avec sa configuration de production amont. Elle ne constitue pas encore une procédure de livraison Hi-Ha. record. Le profil de compilation indépendant doit être préparé et testé avant publication d’un installateur.
+Les configurations Tauri portent les identifiants `be.hi-ha.record` et `be.hi-ha.record.dev`. Les données et journaux sont séparés de Cap. Le protocole de liens de cette édition est `hiha-record://` ; les intégrations externes doivent être adaptées pour l’utiliser.
 
-Ne jamais versionner les fichiers `.env`, les enregistrements personnels, les clés de signature, les certificats privés ou les identifiants Apple. Aucun de ces éléments n’est nécessaire pour consulter ce dépôt.
+La signature et la notarisation utilisent le compte Apple du mainteneur. Ne jamais ajouter les certificats privés, clés, fichiers `.env` ou enregistrements personnels au dépôt.
+
+Voir [FORK.md](FORK.md) pour les vérifications et limites connues. Le [README amont conservé](README.upstream.md) décrit Cap et ses services officiels.

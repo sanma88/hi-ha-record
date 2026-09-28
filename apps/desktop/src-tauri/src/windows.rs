@@ -1286,19 +1286,21 @@ impl CapWindowId {
 
     pub fn title(&self) -> String {
         match self {
-            Self::Settings => "Cap Settings".to_string(),
-            Self::WindowCaptureOccluder { .. } => "Cap Window Capture Occluder".to_string(),
-            Self::CaptureArea => "Cap Capture Area".to_string(),
-            Self::RecordingControls => "Cap Recording Controls".to_string(),
-            Self::Editor { .. } => "Cap Editor".to_string(),
-            Self::ScreenshotEditor { .. } => "Cap Screenshot Editor".to_string(),
-            Self::ModeSelect => "Cap Mode Selection".to_string(),
-            Self::Onboarding => "Welcome to Cap".to_string(),
-            Self::Camera => "Cap Camera".to_string(),
-            Self::RecordingsOverlay => "Cap Recordings Overlay".to_string(),
-            Self::TargetSelectOverlay { .. } => "Cap Target Select".to_string(),
-            Self::Teleprompter => "Cap Teleprompter".to_string(),
-            _ => "Cap".to_string(),
+            Self::Settings => "Hi-Ha Record Settings".to_string(),
+            Self::WindowCaptureOccluder { .. } => {
+                "Hi-Ha Record Window Capture Occluder".to_string()
+            }
+            Self::CaptureArea => "Hi-Ha Record Capture Area".to_string(),
+            Self::RecordingControls => "Hi-Ha Record Recording Controls".to_string(),
+            Self::Editor { .. } => "Hi-Ha Record Editor".to_string(),
+            Self::ScreenshotEditor { .. } => "Hi-Ha Record Screenshot Editor".to_string(),
+            Self::ModeSelect => "Hi-Ha Record Mode Selection".to_string(),
+            Self::Onboarding => "Bienvenue dans Hi-Ha Record".to_string(),
+            Self::Camera => "Hi-Ha Record Camera".to_string(),
+            Self::RecordingsOverlay => "Hi-Ha Record Recordings Overlay".to_string(),
+            Self::TargetSelectOverlay { .. } => "Hi-Ha Record Target Select".to_string(),
+            Self::Teleprompter => "Hi-Ha Record Teleprompter".to_string(),
+            _ => "Hi-Ha Record".to_string(),
         }
     }
 

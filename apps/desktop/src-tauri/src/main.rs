@@ -92,12 +92,12 @@ fn main() {
         let path = dirs::home_dir()
             .unwrap()
             .join("Library/Logs")
-            .join("so.cap.desktop");
+            .join("be.hi-ha.record");
 
         #[cfg(not(target_os = "macos"))]
         let path = dirs::data_local_dir()
             .unwrap()
-            .join("so.cap.desktop")
+            .join("be.hi-ha.record")
             .join("logs");
 
         #[cfg(debug_assertions)]

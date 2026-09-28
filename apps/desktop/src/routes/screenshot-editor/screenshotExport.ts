@@ -438,7 +438,9 @@ const shareLinkFromUploadResult = (result: UploadResult) => {
 		throw new Error("Failed to verify your subscription status");
 	}
 	if (result === "UpgradeRequired") {
-		throw new Error("This feature requires an upgraded plan");
+		throw new Error(
+			"Ce service cloud tiers n’est pas inclus. Exportez le fichier localement.",
+		);
 	}
 
 	return result.Success;

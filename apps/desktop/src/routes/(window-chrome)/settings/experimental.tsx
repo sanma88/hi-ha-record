@@ -20,9 +20,9 @@ import {
 // The mirror of this sequence lives in `render_switch_overlay` in the native
 // app's `settings_pages.rs`.
 const SWITCH_SENTENCES = [
-	"Switching to the native Cap app.",
+	"Switching to the native Hi-Ha Record app.",
 	"It will look almost identical. That is the point.",
-	"Same Cap, rebuilt fully native for performance.",
+	"Same Hi-Ha Record, rebuilt fully native for performance.",
 	"Experimental. Your recordings and settings come with you.",
 ];
 const SENTENCE_MS = 1300;
@@ -187,8 +187,8 @@ function Inner(props: {
 					<Section title="Native app">
 						<SectionRows>
 							<ToggleSettingItem
-								label="Cap GPUI"
-								description="Close this app and reopen the experimental fully-native version of Cap. It is unfinished, so expect missing features. Your recordings and settings are shared, and you can switch back from its Experimental settings."
+								label="Hi-Ha Record GPUI"
+								description="Close this app and reopen the experimental fully-native version of Hi-Ha Record. It is unfinished, so expect missing features. Your recordings and settings are shared, and you can switch back from its Experimental settings."
 								value={!!settings.enableGpuiApp || takeoverActive()}
 								onChange={(value) => {
 									if (value) startTakeover();

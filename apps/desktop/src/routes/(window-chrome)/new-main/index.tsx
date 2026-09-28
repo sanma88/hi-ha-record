@@ -25,13 +25,11 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
-	ErrorBoundary,
 	For,
 	on,
 	onCleanup,
 	onMount,
 	Show,
-	Suspense,
 } from "solid-js";
 import { createStore, produce, reconcile } from "solid-js/store";
 import toast from "solid-toast";
@@ -63,7 +61,6 @@ import {
 	createCameraMutation,
 	createCleanCaptureQuery,
 	createCurrentRecordingQuery,
-	createLicenseQuery,
 	createMicrophoneMutation,
 	getEditorRecordingTarget,
 	getPermissions,
@@ -1689,8 +1686,12 @@ function createUpdateCheck() {
 		let shouldUpdate: boolean | undefined;
 		try {
 			shouldUpdate = await dialog.confirm(
-				`Version ${update.version} of Cap is available, would you like to install it?`,
-				{ title: "Update Cap", okLabel: "Update", cancelLabel: "Ignore" },
+				`Version ${update.version} of Hi-Ha Record is available, would you like to install it?`,
+				{
+					title: "Update Hi-Ha Record",
+					okLabel: "Update",
+					cancelLabel: "Ignore",
+				},
 			);
 		} catch (e) {
 			console.error("Failed to show update dialog:", e);
@@ -1713,8 +1714,8 @@ function createUpdateReadyToast() {
 				<div class="flex flex-col gap-2.5 px-4 py-3 rounded-xl border shadow-lg bg-gray-1 border-gray-4 text-gray-12 w-[min(24rem,calc(100vw-2rem))]">
 					<p class="text-sm">
 						{update.installed
-							? `Cap ${update.version} has been installed — restart to apply`
-							: `Cap ${update.version} is ready to install`}
+							? `Hi-Ha Record ${update.version} has been installed — restart to apply`
+							: `Hi-Ha Record ${update.version} is ready to install`}
 					</p>
 					<div class="flex gap-2 items-center">
 						<button
@@ -1730,7 +1731,7 @@ function createUpdateReadyToast() {
 										toast.error(
 											typeof error === "string"
 												? error
-												: "Unable to restart Cap safely.",
+												: "Unable to restart Hi-Ha Record safely.",
 										);
 									})
 									.finally(() => setInstallingUpdate(false));
@@ -1846,10 +1847,10 @@ function Page() {
 	const isRecording = () => !!currentRecording.data;
 	const isActivelyRecording = () =>
 		currentRecording.data?.status === "recording";
-	const auth = authStore.createQuery();
+	const _auth = authStore.createQuery();
 	const recordingSettingsQuery = recordingDeviceSettingsStore.createQuery();
 	const generalSettings = generalSettingsStore.createQuery();
-	const serverUrl = createMemo(
+	const _serverUrl = createMemo(
 		() => generalSettings.data?.serverUrl ?? clientEnv.VITE_SERVER_URL,
 	);
 	const deviceSettings = createMemo(
@@ -2703,8 +2704,6 @@ function Page() {
 		}
 	});
 
-	const license = createLicenseQuery();
-
 	const signIn = createSignInMutation();
 	const stopRecording = createMutation(() => ({
 		mutationFn: async () => {
@@ -3024,18 +3023,18 @@ function Page() {
 							: "Clean Studio recording"
 					}
 				>
-					<strong>Record without Cap's preview and controls</strong>
+					<strong>Record without Hi-Ha Record's preview and controls</strong>
 					<p class="text-sm">
 						{cleanCapture.data?.mode === "instant"
-							? "Any selected camera will be included in the video with its preview appearance. Cap's preview and controls will hide."
-							: "Any selected camera will keep recording as a separate editable track. Cap's preview and controls will hide."}
+							? "Any selected camera will be included in the video with its preview appearance. Hi-Ha Record's preview and controls will hide."
+							: "Any selected camera will keep recording as a separate editable track. Hi-Ha Record's preview and controls will hide."}
 					</p>
 					<p class="text-sm">
 						Press <strong>{cleanCapture.data?.shortcut}</strong> to start, then
 						use it to stop.{" "}
 						{cleanCapture.data?.mode === "instant"
-							? "Open Cap to stop and show controls."
-							: "Open Cap to pause and show controls."}
+							? "Open Hi-Ha Record to stop and show controls."
+							: "Open Hi-Ha Record to pause and show controls."}
 					</p>
 					<button
 						type="button"
@@ -3146,41 +3145,23 @@ function Page() {
 						fallback={
 							<div class="flex items-center space-x-1">
 								<a
-									class="*:w-[92px] *:h-auto text-(--text-primary)"
+									class="*:w-[132px] *:h-auto text-(--text-primary)"
 									target="_blank"
-									href={
-										auth.data
-											? new URL("/dashboard", serverUrl()).toString()
-											: serverUrl()
-									}
+									href="https://hi-ha.be"
+									rel="noopener"
 								>
 									<IconCapLogoFullDark class="hidden dark:block" />
 									<IconCapLogoFull class="block dark:hidden" />
 								</a>
-								<ErrorBoundary fallback={null}>
-									<Suspense>
-										<Show
-											when={license.data?.type !== "pro"}
-											fallback={
-												<span class="text-[0.6rem] ml-2 rounded-lg border border-gray-5 px-1 py-0.5 bg-(--blue-400) text-gray-1 dark:text-gray-12">
-													{license.data?.type === "commercial"
-														? "Commercial"
-														: "Pro"}
-												</span>
-											}
-										>
-											<button
-												type="button"
-												onClick={() => {
-													void commands.showWindow("Upgrade");
-												}}
-												class="text-[0.6rem] ml-2 rounded-lg border border-gray-5 px-1 py-0.5 bg-gray-3 hover:bg-gray-5"
-											>
-												Personal
-											</button>
-										</Show>
-									</Suspense>
-								</ErrorBoundary>
+								<button
+									type="button"
+									class="text-[10px] ml-2 text-gray-11 underline"
+									onClick={() =>
+										void commands.showWindow({ Settings: { page: "license" } })
+									}
+								>
+									AGPLv3
+								</button>
 							</div>
 						}
 					>
@@ -3400,7 +3381,9 @@ function Page() {
 						<Show when={cleanCapture.data?.phase === "paused"}>
 							<div class="mb-3 flex items-center justify-between gap-2 rounded-lg bg-gray-3 p-2 text-sm">
 								<div class="min-w-0">
-									<span>Recording paused. Cap will hide before resuming.</span>
+									<span>
+										Recording paused. Hi-Ha Record will hide before resuming.
+									</span>
 								</div>
 								<button
 									type="button"

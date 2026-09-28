@@ -22,6 +22,7 @@ import { Toaster } from "solid-toast";
 import "@cap/ui-solid/main.css";
 import "unfonts.css";
 import "./styles/theme.css";
+import "./styles/hiha.css";
 
 import { CapErrorBoundary } from "./components/CapErrorBoundary";
 import WindowChromeLayout from "./routes/(window-chrome)";
@@ -63,7 +64,7 @@ const SettingsFeedbackPage = lazy(
 	() => import("./routes/(window-chrome)/settings/feedback"),
 );
 const SettingsExperimentalPage = lazy(
-	() => import("./routes/(window-chrome)/settings/experimental"),
+	() => import("./routes/(window-chrome)/settings/license"),
 );
 const SettingsLicensePage = lazy(
 	() => import("./routes/(window-chrome)/settings/license"),

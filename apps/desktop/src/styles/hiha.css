@@ -1,0 +1,145 @@
+@font-face {
+	font-family: "HiHa Inter";
+	src: url("/brand/InterVariable.ttf") format("truetype");
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+:root {
+	--gray-1: #f4f7fb;
+	--gray-2: #ffffff;
+	--gray-3: #edf0f6;
+	--gray-4: #e5e7ef;
+	--gray-5: #dfe1e9;
+	--gray-6: #d2d5e0;
+	--gray-7: #b9bdc9;
+	--gray-8: #969ca8;
+	--gray-9: #6b7079;
+	--gray-10: #626771;
+	--gray-11: #4e535d;
+	--gray-12: #2c2f36;
+	--blue-1: #faf9fd;
+	--blue-2: #f4f3fa;
+	--blue-3: #eeecf8;
+	--blue-4: #e5e2f3;
+	--blue-5: #dad9ee;
+	--blue-6: #cac7e7;
+	--blue-7: #b9b5dd;
+	--blue-8: #9892ca;
+	--blue-9: #635e9b;
+	--blue-10: #57518f;
+	--blue-11: #635e9b;
+	--blue-12: #363b41;
+	--indigo-1: #faf9fd;
+	--indigo-2: #f4f3fa;
+	--indigo-3: #eeecf8;
+	--indigo-4: #e5e2f3;
+	--indigo-5: #dad9ee;
+	--indigo-6: #cac7e7;
+	--indigo-7: #b9b5dd;
+	--indigo-8: #9892ca;
+	--indigo-9: #635e9b;
+	--indigo-10: #57518f;
+	--indigo-11: #635e9b;
+	--indigo-12: #363b41;
+	--brand-accent: #7e7bc4;
+	--ed-window: #f4f7fb;
+	--ed-card: #ffffff;
+	--ed-card-2: #edf0f6;
+	--ed-stage: #e5e7ef;
+	--ed-text-1: #2c2f36;
+	--ed-text-2: #4e535d;
+	--ed-text-3: #626771;
+	--ed-accent: #635e9b;
+	--ed-accent-2: #9892ca;
+	--text-primary: #2c2f36;
+	--text-secondary: #4e535d;
+	--text-tertiary: #626771;
+	--track-clip: #635e9b;
+	--blue-400: #635e9b;
+	--blue-500: #57518f;
+	--blue-50: #eeecf8;
+	--blue-100: #dad9ee;
+	--blue-200: #cac7e7;
+	--blue-300: #9892ca;
+	--gray-50: #ffffff;
+	--gray-100: #f4f7fb;
+	--gray-200: #dfe1e9;
+	--gray-300: #b9bdc9;
+	--gray-400: #626771;
+	--gray-450: #4e535d;
+	--gray-500: #2c2f36;
+}
+:root.dark {
+	--gray-1: #0b0b0c;
+	--gray-2: #16181d;
+	--gray-3: #1b1e24;
+	--gray-4: #22262d;
+	--gray-5: #2a2e36;
+	--gray-6: #353a44;
+	--gray-7: #454b58;
+	--gray-8: #606777;
+	--gray-9: #808794;
+	--gray-10: #9ca1ac;
+	--gray-11: #c1c6d0;
+	--gray-12: #e7eaf0;
+	--blue-1: #14121d;
+	--blue-2: #1d1a2a;
+	--blue-3: #272338;
+	--blue-4: #312c46;
+	--blue-5: #3f3859;
+	--blue-6: #51466d;
+	--blue-7: #695d8d;
+	--blue-8: #7e7bc4;
+	--blue-9: #635e9b;
+	--blue-10: #726bae;
+	--blue-11: #b9b7e6;
+	--blue-12: #e7eaf0;
+	--indigo-1: #14121d;
+	--indigo-2: #1d1a2a;
+	--indigo-3: #272338;
+	--indigo-4: #312c46;
+	--indigo-5: #3f3859;
+	--indigo-6: #51466d;
+	--indigo-7: #695d8d;
+	--indigo-8: #7e7bc4;
+	--indigo-9: #635e9b;
+	--indigo-10: #726bae;
+	--indigo-11: #b9b7e6;
+	--indigo-12: #e7eaf0;
+	--brand-accent: #b9b7e6;
+	--ed-window: #0b0b0c;
+	--ed-card: #16181d;
+	--ed-card-2: #1b1e24;
+	--ed-stage: #22262d;
+	--ed-text-1: #e7eaf0;
+	--ed-text-2: #c1c6d0;
+	--ed-text-3: #9ca1ac;
+	--ed-accent: #b9b7e6;
+	--ed-accent-2: #7e7bc4;
+	--text-primary: #e7eaf0;
+	--text-secondary: #c1c6d0;
+	--text-tertiary: #9ca1ac;
+	--track-clip: #635e9b;
+	--blue-400: #635e9b;
+	--blue-500: #726bae;
+	--blue-50: #272338;
+	--blue-100: #3f3859;
+	--blue-200: #51466d;
+	--blue-300: #7e7bc4;
+	--gray-50: #16181d;
+	--gray-100: #0b0b0c;
+	--gray-200: #2a2e36;
+	--gray-300: #454b58;
+	--gray-400: #9ca1ac;
+	--gray-450: #c1c6d0;
+	--gray-500: #e7eaf0;
+}
+html,
+body,
+button,
+input,
+select,
+textarea {
+	font-family: "HiHa Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}

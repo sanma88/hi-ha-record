@@ -2434,7 +2434,7 @@ function ShowCapFreeWarning(props: { isInstantMode: boolean }) {
 						class="underline font-bold text-gray-3"
 						onClick={() => commands.showWindow("Upgrade")}
 					>
-						Upgrade to Pro
+						À propos des services tiers
 					</button>
 				</p>
 			</Show>

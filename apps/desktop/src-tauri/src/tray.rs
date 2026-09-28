@@ -484,11 +484,11 @@ fn build_tray_menu(app: &AppHandle, cache: &PreviousItemsCache) -> tauri::Result
                 &MenuItem::with_id(
                     app,
                     "version",
-                    format!("Cap v{}", env!("CARGO_PKG_VERSION")),
+                    format!("Hi-Ha Record v{}", env!("CARGO_PKG_VERSION")),
                     false,
                     None::<&str>,
                 )?,
-                &MenuItem::with_id(app, TrayItem::Quit, "Quit Cap", true, None::<&str>)?,
+                &MenuItem::with_id(app, TrayItem::Quit, "Quit Hi-Ha Record", true, None::<&str>)?,
             ],
         );
     }
@@ -607,14 +607,14 @@ fn build_tray_menu(app: &AppHandle, cache: &PreviousItemsCache) -> tauri::Result
     menu.append(&MenuItem::with_id(
         app,
         "version",
-        format!("Cap v{}", env!("CARGO_PKG_VERSION")),
+        format!("Hi-Ha Record v{}", env!("CARGO_PKG_VERSION")),
         false,
         None::<&str>,
     )?)?;
     menu.append(&MenuItem::with_id(
         app,
         TrayItem::Quit,
-        "Quit Cap",
+        "Quit Hi-Ha Record",
         true,
         None::<&str>,
     )?)?;

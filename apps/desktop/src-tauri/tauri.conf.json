@@ -1,8 +1,8 @@
 {
 	"$schema": "https://schema.tauri.app/config/2",
-	"productName": "Cap - Development",
-	"identifier": "so.cap.desktop.dev",
-	"mainBinaryName": "Cap - Development",
+	"productName": "Hi-Ha Record - Development",
+	"identifier": "be.hi-ha.record.dev",
+	"mainBinaryName": "Hi-Ha Record - Development",
 	"build": {
 		"beforeDevCommand": "bun run localdev",
 		"devUrl": "http://localhost:3002",
@@ -33,16 +33,20 @@
 		}
 	},
 	"plugins": {
-		"updater": { "active": false, "pubkey": "" },
+		"updater": {
+			"active": false,
+			"endpoints": [],
+			"pubkey": ""
+		},
 		"deep-link": {
 			"desktop": {
-				"schemes": ["cap-desktop"]
+				"schemes": ["hiha-record"]
 			}
 		}
 	},
 	"bundle": {
 		"active": true,
-		"createUpdaterArtifacts": true,
+		"createUpdaterArtifacts": false,
 		"targets": "all",
 		"externalBin": [
 			"binaries/cap-muxer",
@@ -64,7 +68,10 @@
 			"assets/backgrounds/orange/*": "assets/backgrounds/orange/",
 			"assets/backgrounds/purple/*": "assets/backgrounds/purple/",
 			"../src/assets/rive/*.riv": "assets/rive/",
-			"../src/assets/music/*.mp3": "assets/music/"
+			"../src/assets/music/*.mp3": "assets/music/",
+			"../../../LICENSE": "legal/LICENSE",
+			"../../../NOTICE.md": "legal/NOTICE.md",
+			"../../../licenses/*": "legal/"
 		},
 		"macOS": {
 			"minimumSystemVersion": "12.3",
@@ -120,7 +127,7 @@
 		"fileAssociations": [
 			{
 				"ext": ["cap"],
-				"name": "Cap Project",
+				"name": "Hi-Ha Record Project",
 				"mimeType": "application/x-cap-project",
 				"role": "Editor"
 			}

@@ -107,7 +107,7 @@ export const EXPORT_TO_OPTIONS = [
 		label: "Shareable Link",
 		value: "link",
 		icon: IconCapLink,
-		description: "Share via Cap cloud",
+		description: "Share via an external Cap server",
 	},
 ] as const;
 
@@ -906,7 +906,9 @@ export function ExportPage() {
 				else if (result === "PlanCheckFailed")
 					throw new Error("Failed to verify your subscription status");
 				else if (result === "UpgradeRequired")
-					throw new Error("This feature requires an upgraded plan");
+					throw new Error(
+						"Ce service cloud tiers n’est pas inclus. Exportez le fichier localement.",
+					);
 			} finally {
 				await releaseExportSession();
 			}
@@ -1702,7 +1704,7 @@ export function ExportPage() {
 													subtitle={
 														reuploading()
 															? "Your latest edit is ready at the same link"
-															: "Your Cap has been uploaded successfully"
+															: "Your recording has been uploaded successfully"
 													}
 												/>
 											</Match>

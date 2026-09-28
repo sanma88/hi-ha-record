@@ -133,6 +133,10 @@ async fn check_channel(
     channel: UpdateChannel,
     allow_stable_downgrade: bool,
 ) -> Result<Option<Update>, String> {
+    if app.config().identifier.starts_with("be.hi-ha.record") {
+        return Ok(None);
+    }
+
     let builder = app
         .updater_builder()
         .target(updater_target()?)

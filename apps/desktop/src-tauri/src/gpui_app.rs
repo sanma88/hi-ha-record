@@ -135,16 +135,16 @@ fn binary_path(app: &AppHandle) -> Option<PathBuf> {
 
 /// Mirror of `store::app_data_dir` in `apps/desktop-gpui`: the pidfile and the
 /// handoff marker live under the shared production identifier
-/// (`so.cap.desktop`), not this app's possibly-`.dev` one.
+/// (`be.hi-ha.record`), not this app's possibly-`.dev` one.
 fn shared_data_dir() -> PathBuf {
     #[cfg(target_os = "macos")]
     let base = PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into()))
-        .join("Library/Application Support/so.cap.desktop");
+        .join("Library/Application Support/be.hi-ha.record");
     #[cfg(target_os = "windows")]
     let base = std::env::var_os("APPDATA")
         .map(PathBuf::from)
         .unwrap_or_else(|| PathBuf::from("."))
-        .join("so.cap.desktop");
+        .join("be.hi-ha.record");
     #[cfg(all(not(target_os = "macos"), not(target_os = "windows")))]
     let base = std::env::var_os("XDG_DATA_HOME")
         .map(PathBuf::from)
@@ -152,7 +152,7 @@ fn shared_data_dir() -> PathBuf {
             PathBuf::from(std::env::var_os("HOME").unwrap_or_else(|| ".".into()))
                 .join(".local/share")
         })
-        .join("so.cap.desktop");
+        .join("be.hi-ha.record");
     base
 }
 
@@ -161,7 +161,7 @@ fn gpui_pidfile() -> PathBuf {
 }
 
 /// Whether this app's own store IS the shared one. It is for the production
-/// bundle (`so.cap.desktop`), but a dev build stores under a `.dev` identifier
+/// bundle (`be.hi-ha.record`), but a dev build stores under a `.dev` identifier
 /// while `cap-gpui` always reads and writes the shared file -- two stores that
 /// silently disagree. The handoff flag therefore lives in the shared store,
 /// and this app's own copy of the setting is just what its settings page
@@ -417,8 +417,7 @@ fn parse_gpui_forwarding_endpoint(contents: &str) -> Option<GpuiForwardingEndpoi
 fn is_forwardable_gpui_deep_link(url: &str) -> bool {
     !url.is_empty()
         && url.len() <= MAX_FORWARDED_DEEP_LINK_BYTES
-        && reqwest::Url::parse(url)
-            .is_ok_and(|parsed| matches!(parsed.scheme(), "cap-desktop" | "cap"))
+        && reqwest::Url::parse(url).is_ok_and(|parsed| matches!(parsed.scheme(), "hiha-record"))
 }
 
 #[cfg(any(target_os = "macos", windows, test))]
@@ -445,7 +444,7 @@ fn forwarded_gpui_argument(argument: &str) -> Option<String> {
     }
     let path = path.canonicalize().ok()?;
     let value = serde_json::json!({ "open_editor": { "project_path": path } }).to_string();
-    let mut url = reqwest::Url::parse("cap-desktop://action").ok()?;
+    let mut url = reqwest::Url::parse("hiha-record://action").ok()?;
     url.query_pairs_mut().append_pair("value", &value);
     let url = url.to_string();
     is_forwardable_gpui_deep_link(&url).then_some(url)
@@ -881,7 +880,7 @@ pub(crate) fn retire_foreground_parent_for_handoff(app: &AppHandle) {
 #[tauri::command]
 #[specta::specta]
 pub async fn gpui_app_available(app: AppHandle) -> bool {
-    binary_path(&app).is_some()
+    !app.config().identifier.starts_with("be.hi-ha.record") && binary_path(&app).is_some()
 }
 
 /// Close this app and open the native one. The setting has already been written
@@ -890,6 +889,9 @@ pub async fn gpui_app_available(app: AppHandle) -> bool {
 #[tauri::command]
 #[specta::specta]
 pub async fn switch_to_gpui_app(app: AppHandle) -> Result<(), String> {
+    if app.config().identifier.starts_with("be.hi-ha.record") {
+        return Err("The experimental upstream interface is not part of Hi-Ha Record".into());
+    }
     let path =
         binary_path(&app).ok_or_else(|| "Cap GPUI isn't included in this build".to_string())?;
     crate::prepare_app_exit(&app, || {
@@ -1021,6 +1023,9 @@ fn acknowledge_classic_window(app: &AppHandle) {
 }
 
 fn redirect_decision(app: &AppHandle) -> Result<bool, String> {
+    if app.config().identifier.starts_with("be.hi-ha.record") {
+        return Ok(false);
+    }
     let own = GeneralSettingsStore::get(app)
         .ok()
         .flatten()
@@ -1309,15 +1314,15 @@ mod tests {
     #[test]
     fn forwarded_gpui_deep_links_are_scheme_and_size_limited() {
         assert!(is_forwardable_gpui_deep_link(
-            "cap-desktop://signin?token=test"
+            "hiha-record://signin?token=test"
         ));
-        assert!(is_forwardable_gpui_deep_link(
+        assert!(!is_forwardable_gpui_deep_link(
             "cap://action?value=%22stop_recording%22"
         ));
         assert!(!is_forwardable_gpui_deep_link("https://cap.so/signin"));
         assert!(!is_forwardable_gpui_deep_link("cap-desktop-other://signin"));
         assert!(!is_forwardable_gpui_deep_link(&format!(
-            "cap://action?value={}",
+            "hiha-record://action?value={}",
             "x".repeat(MAX_FORWARDED_DEEP_LINK_BYTES)
         )));
     }
@@ -1336,7 +1341,7 @@ mod tests {
             .unwrap();
         let action: serde_json::Value = serde_json::from_str(&value).unwrap();
 
-        assert_eq!(url.scheme(), "cap-desktop");
+        assert_eq!(url.scheme(), "hiha-record");
         assert_eq!(url.host_str(), Some("action"));
         assert_eq!(
             action["open_editor"]["project_path"],
@@ -1356,8 +1361,8 @@ mod tests {
                 .is_none()
         );
         assert_eq!(
-            forwarded_gpui_argument("cap-desktop://signin?token=secret"),
-            Some("cap-desktop://signin?token=secret".to_string())
+            forwarded_gpui_argument("hiha-record://signin?token=secret"),
+            Some("hiha-record://signin?token=secret".to_string())
         );
     }
 
@@ -1390,7 +1395,7 @@ mod tests {
         let project = directory.path().join("Recording.cap");
         std::fs::create_dir(&project).unwrap();
         for argument in [
-            "cap-desktop://auth?token=fixture".to_string(),
+            "hiha-record://auth?token=fixture".to_string(),
             "cap://action?value=%22stop_recording%22".to_string(),
             project.to_str().unwrap().to_string(),
             reqwest::Url::from_file_path(&project).unwrap().to_string(),

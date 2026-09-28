@@ -3,7 +3,6 @@ import { makePersisted } from "@solid-primitives/storage";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ask, message as showMessage } from "@tauri-apps/plugin-dialog";
 import { type as ostype } from "@tauri-apps/plugin-os";
-import * as shell from "@tauri-apps/plugin-shell";
 import { cx } from "cva";
 import {
 	createEffect,
@@ -124,20 +123,21 @@ const setupPermissions: readonly SetupPermission[] = [
 		name: "Screen Recording",
 		key: "screenRecording",
 		description:
-			"Click Grant to allow when macOS asks, or pick Cap in System Settings if needed. Restart the app after allowing screen recording.",
+			"Click Grant to allow when macOS asks, or pick Hi-Ha Record in System Settings if needed. Restart the app after allowing screen recording.",
 		requiresManualGrant: false,
 	},
 	{
 		name: "Accessibility",
 		key: "accessibility",
 		description:
-			"During recording, Cap collects mouse activity locally to generate automatic zoom in segments.",
+			"During recording, Hi-Ha Record collects mouse activity locally to generate automatic zoom in segments.",
 		requiresManualGrant: false,
 	},
 	{
 		name: "Microphone",
 		key: "microphone",
-		description: "This permission is required to record audio in your Caps.",
+		description:
+			"This permission is required to record audio in your recordings.",
 		requiresManualGrant: false,
 		optional: true,
 	},
@@ -145,7 +145,7 @@ const setupPermissions: readonly SetupPermission[] = [
 		name: "Camera",
 		key: "camera",
 		description:
-			"This permission is required to record your camera in your Caps.",
+			"This permission is required to record your camera in your recordings.",
 		requiresManualGrant: false,
 		optional: true,
 	},
@@ -412,8 +412,8 @@ export default function OnboardingPage() {
 	});
 
 	const nextLabel = () => {
-		if (permissionsOnly()) return "Continue to Cap";
-		if (step() === totalSteps() - 1) return "Start Using Cap";
+		if (permissionsOnly()) return "Continue to Hi-Ha Record";
+		if (step() === totalSteps() - 1) return "Start Using Hi-Ha Record";
 		return "Continue";
 	};
 
@@ -699,8 +699,8 @@ function ModesOverviewStep(props: { active: boolean }) {
 					One app, every workflow
 				</h2>
 				<p class="text-[14px] text-gray-10 leading-relaxed">
-					Whether you need speed, studio quality, or a quick screenshot — Cap
-					has a mode for it.
+					Whether you need speed, studio quality, or a quick screenshot — Hi-Ha
+					Record has a mode for it.
 				</p>
 			</div>
 
@@ -856,7 +856,8 @@ function ToggleStep(props: { active: boolean }) {
 					Switch modes anytime
 				</h2>
 				<p class="text-[14px] text-gray-10 leading-relaxed">
-					Toggle between modes with a single click from the main Cap window.
+					Toggle between modes with a single click from the main Hi-Ha Record
+					window.
 				</p>
 			</div>
 
@@ -987,11 +988,11 @@ function ShortcutsStep(props: { active: boolean }) {
 					<IconCapSettings class="size-5 text-gray-11" />
 				</div>
 				<h2 class="text-2xl font-bold text-gray-12 tracking-tight">
-					Make Cap yours
+					Make Hi-Ha Record yours
 				</h2>
 				<p class="text-[14px] text-gray-10 leading-relaxed">
-					Customize everything from keyboard shortcuts to storage. Cap adapts to
-					your workflow.
+					Customize everything from keyboard shortcuts to storage. Hi-Ha Record
+					adapts to your workflow.
 				</p>
 			</div>
 
@@ -1069,18 +1070,12 @@ function FaqStep(props: { active: boolean }) {
 					visible() ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4",
 				)}
 			>
-				<FaqItem question="Is Cap free to use?">
+				<FaqItem question="Puis-je utiliser Hi-Ha Record pour mes formations payantes ?">
 					<p class="text-[13px] text-gray-10 leading-relaxed">
-						Cap is free for personal use. For teams and commercial use, check
-						out our{" "}
-						<button
-							type="button"
-							onClick={() => shell.open("https://cap.so/pricing?ref=desktop")}
-							class="text-blue-10 hover:text-blue-11 underline underline-offset-2"
-						>
-							pricing plans
-						</button>
-						.
+						Oui. Cette version est utilisable à titre personnel ou professionnel
+						sous AGPLv3, sans achat de licence commerciale. Vos vidéos restent
+						vos contenus. Les crédits et licences sont disponibles dans les
+						réglages.
 					</p>
 				</FaqItem>
 				<FaqItem question="What's the difference between Instant and Studio?">
@@ -1094,8 +1089,8 @@ function FaqStep(props: { active: boolean }) {
 				<FaqItem question="Where are my recordings stored?">
 					<p class="text-[13px] text-gray-10 leading-relaxed">
 						All recordings are stored locally on your computer. In Instant mode,
-						they're also uploaded to Cap's cloud for easy sharing. You can
-						manage storage in Settings.
+						they're also uploaded to an external Cap server for easy sharing.
+						You can manage storage in Settings.
 					</p>
 				</FaqItem>
 				<FaqItem question="Can I change my shortcuts later?">
@@ -1108,20 +1103,20 @@ function FaqStep(props: { active: boolean }) {
 					<p class="text-[13px] text-gray-10 leading-relaxed">
 						In Instant mode, you get a shareable link automatically when you
 						stop recording. In Studio mode, export your edited video and share
-						via Cap's cloud or save locally.
+						via an external Cap server or save locally.
 					</p>
 				</FaqItem>
 			</div>
 
 			<button
 				type="button"
-				onClick={() => shell.open("https://cap.so/pricing?ref=desktop")}
+				onClick={() => commands.showWindow({ Settings: { page: "license" } })}
 				class={cx(
 					"flex items-center gap-1.5 text-[13px] text-blue-10 hover:text-blue-11 transition-all duration-500 delay-200",
 					visible() ? "opacity-100" : "opacity-0",
 				)}
 			>
-				View pricing plans
+				À propos et licences
 				<IconLucideExternalLink class="size-3" />
 			</button>
 		</div>
@@ -1570,7 +1565,7 @@ function StudioMockup(props: { active: boolean }) {
 								<div class="size-2 rounded-full bg-gray-6" />
 							</div>
 							<span class="text-[10px] text-gray-11 font-medium">
-								Cap Editor
+								Hi-Ha Record Editor
 							</span>
 						</div>
 						<div
@@ -1920,7 +1915,7 @@ function StartupOverlay(props: {
 						/>
 					</div>
 					<h1 class="text-5xl md:text-5xl font-bold mb-4 mt-8 drop-shadow-[0_0_20px_rgba(0,0,0,0.2)]">
-						Welcome to Cap
+						Bienvenue dans Hi-Ha Record
 					</h1>
 					<p class="text-xl md:text-2xl opacity-80 mx-auto drop-shadow-[0_0_20px_rgba(0,0,0,0.2)] whitespace-nowrap">
 						Beautiful screen recordings, owned by you.
@@ -1998,8 +1993,8 @@ function PermissionsStep(props: {
 	const maybePromptRestartForPermission = async (permission: OSPermission) => {
 		const message =
 			permission === "accessibility"
-				? "After enabling Accessibility for Cap in System Settings, macOS may keep showing it as denied until you restart the app."
-				: "After adding Cap in System Settings, you'll need to restart the app for the permission to take effect.";
+				? "After enabling Accessibility for Hi-Ha Record in System Settings, macOS may keep showing it as denied until you restart the app."
+				: "After adding Hi-Ha Record in System Settings, you'll need to restart the app for the permission to take effect.";
 		const shouldRestart = await ask(message, {
 			title: "Restart Required",
 			kind: "info",
@@ -2011,8 +2006,10 @@ function PermissionsStep(props: {
 				await commands.restartApp();
 			} catch (error) {
 				await showMessage(
-					typeof error === "string" ? error : "Unable to restart Cap safely.",
-					{ title: "Unable to restart Cap", kind: "warning" },
+					typeof error === "string"
+						? error
+						: "Unable to restart Hi-Ha Record safely.",
+					{ title: "Unable to restart Hi-Ha Record", kind: "warning" },
 				);
 			}
 		}
@@ -2081,7 +2078,8 @@ function PermissionsStep(props: {
 					Permissions Required
 				</h2>
 				<p class="text-[14px] text-gray-10 leading-relaxed">
-					Cap needs a few permissions to record your screen and capture audio.
+					Hi-Ha Record needs a few permissions to record your screen and capture
+					audio.
 				</p>
 			</div>
 
