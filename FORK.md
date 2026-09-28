@@ -87,3 +87,11 @@ Validation : 11 tests ciblés, TypeScript desktop, Biome ciblé et compilation d
 - Notices AGPL, MIT, Inter et ONNX présentes dans l’application distribuée.
 - L’assemblage DMG Tauri a échoué ; l’image finale a été créée avec `hdiutil` à partir du paquet signé, avec un raccourci Applications. Voir BUILDING.md.
 - La release GitHub fournit le DMG, une archive des sources exactes et `SHA256SUMS.txt`.
+
+## Réparation des aperçus vidéo — 0.6.3
+
+La CSP introduite en 0.6.1 définissait `connect-src` sans autoriser les WebSockets locaux. La directive prenait priorité sur `default-src`, provoquant une `SecurityError` dans WebKit à l’ouverture des aperçus caméra et de l’éditeur, alors que la capture native pouvait terminer normalement.
+
+La version 0.6.3 autorise uniquement `ws://localhost:*` et `ws://127.0.0.1:*` pour ces échanges vidéo sur le Mac. L’autorisation générique `ws:` a été retirée de `default-src` ; les services cloud restent désactivés.
+
+Validation : un test WebKit avec serveur WebSocket éphémère reproduit la `SecurityError` avec l’ancienne CSP sur les deux adresses, reçoit une trame avec la nouvelle CSP, et vérifie qu’une adresse externe reste bloquée. Les trois tests de l’édition locale passent. Les pistes écran et caméra d’un enregistrement réel de 7 secondes se décodent ; l’exporteur livré produit un MP4 de 7,3 secondes dont les pistes H.264/AAC sont également décodées sans erreur. Aucun enregistrement personnel n’est joint au dépôt ni à la release.

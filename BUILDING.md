@@ -87,3 +87,15 @@ xcrun notarytool submit "Hi-Ha-Record-0.6.2-arm64.dmg" --keychain-profile "HiHaR
 ```
 
 Après un statut `Accepted`, joindre le ticket avec `xcrun stapler staple`, le vérifier avec `xcrun stapler validate`, puis vérifier Gatekeeper. Calculer le SHA-256 uniquement après le stapling. Ne pas modifier le contenu de l’application après sa signature.
+
+## Vérifier les flux vidéo locaux
+
+Le test `scripts/test-local-frame-csp.mjs` utilise Playwright et son navigateur WebKit. Il lance un serveur WebSocket éphémère uniquement sur `127.0.0.1`, reproduit le blocage avec une CSP restrictive, puis vérifie la réception d’une trame avec la CSP de l’application pour `localhost` et `127.0.0.1`. Une adresse externe doit rester bloquée. Il ne capture ni écran ni caméra.
+
+Avec Playwright et WebKit installés dans l’environnement de test :
+
+```sh
+node scripts/test-local-frame-csp.mjs
+```
+
+Si Playwright est installé hors du dépôt, fournir le chemin absolu de son module via `PLAYWRIGHT_MODULE=/chemin/node_modules/playwright/index.mjs`. Ce test complète les contrôles natifs et l’essai d’un véritable export MP4.
