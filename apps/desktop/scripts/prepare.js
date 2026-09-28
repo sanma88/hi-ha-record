@@ -142,6 +142,8 @@ export async function createTauriPlatformConfigs(
 				resources: {
 					"../../../target/native-deps/onnxruntime/lib/libonnxruntime.dylib":
 						"onnxruntime/lib/libonnxruntime.dylib",
+					"../../../target/native-deps/onnxruntime/licenses/*":
+						"legal/onnxruntime/",
 				},
 			},
 		};

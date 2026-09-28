@@ -461,6 +461,15 @@ async function setupMacOSOnnxRuntime() {
 		if (env.APPLE_SIGNING_IDENTITY) await signMacOSDylib(outputPath);
 	}
 
+	const licenseDir = path.join(outputDir, "..", "licenses");
+	await fs.mkdir(licenseDir, { recursive: true });
+	if (!(await fileExists(path.join(extractDir, "LICENSE")))) {
+		await execFile("tar", ["xf", archivePath, "-C", targetDir]);
+	}
+	for (const name of ["LICENSE", "ThirdPartyNotices.txt"]) {
+		await fs.copyFile(path.join(extractDir, name), path.join(licenseDir, name));
+	}
+
 	return outputPath;
 }
 

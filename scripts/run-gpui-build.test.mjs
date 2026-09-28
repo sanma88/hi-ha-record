@@ -48,3 +48,16 @@ test("release bundling is mandatory on every supported desktop platform", () => 
 	}
 	assert.equal(shouldBundleGpui("freebsd", {}, "release", true), false);
 });
+
+test("editions without GPUI neither build nor bundle it", () => {
+	for (const platform of ["darwin", "win32", "linux"]) {
+		for (const profile of ["debug", "release"]) {
+			const environment = { CAP_GPUI_DISABLED: "1" };
+			assert.equal(shouldBuildGpui(platform, environment, profile), false);
+			assert.equal(
+				shouldBundleGpui(platform, environment, profile, true),
+				false,
+			);
+		}
+	}
+});

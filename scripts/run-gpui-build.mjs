@@ -9,6 +9,7 @@ export function shouldBuildGpui(
 	profile,
 	developmentWorkspaceAvailable = true,
 ) {
+	if (environment.CAP_GPUI_DISABLED === "1") return false;
 	if (!["darwin", "win32", "linux"].includes(platform)) return false;
 	if (profile === "release") return true;
 	return (

@@ -16,7 +16,9 @@ const configNames = {
 };
 const configName = configNames[process.platform];
 
-if (!configName) {
+if (process.env.CAP_GPUI_DISABLED === "1") {
+	console.log("GPUI is excluded from this desktop edition.");
+} else if (!configName) {
 	console.log(`Skipping Cap GPUI release validation on ${process.platform}.`);
 } else {
 	const srcTauri = path.join(repoRoot, "apps/desktop/src-tauri");

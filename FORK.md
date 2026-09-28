@@ -32,11 +32,11 @@
 - Licence principale et licence MIT conservées intégralement.
 - Icône ICNS construite à partir des PNG inchangés de Hi-Ha Voice ; lecture 1024 × 1024 vérifiée avec les outils macOS.
 
-`cargo check -p cap-desktop` reste bloqué dans le script de construction de la dépendance `cidre` : `xcodebuild` exige Xcode complet, alors que seul le répertoire Command Line Tools est actif. Le code natif final n’a donc pas encore été entièrement vérifié par le compilateur.
+La compilation native optimisée a réussi avec Xcode 27.0, Rust 1.88.0 et CMake 3.31.10 sur Apple Silicon. Les outils d’export et le moteur Whisper ont également été compilés. Les six tests du sélecteur de compilation GPUI passent ; cette édition exclut GPUI de la compilation et du paquet. Les notices ONNX sont copiées par la préparation et incluses dans les ressources. L’application obtenue porte l’identifiant `be.hi-ha.record`, est arm64 et sa signature ad hoc passe `codesign --verify --deep --strict`. Les licences AGPL, MIT, Inter et ONNX sont présentes dans les ressources. L’assemblage non interactif produit l’application et un DMG local ; le fond d’installateur portant la marque Cap est retiré. Voir [BUILDING.md](BUILDING.md).
 
 ## Avant un installateur
 
-1. Installer/configurer Xcode complet et les dépendances multimédias, puis obtenir la compilation native.
+1. Vérifier le paquet produit et sa signature pour le mode de distribution choisi.
 2. Tester réellement capture écran, microphone, caméra, montage, export et permissions sur macOS.
 3. Vérifier les intégrations facultatives et leurs liens de retour : aucun service cloud Hi-Ha n’est déployé.
 4. Compléter l’inventaire des licences des composants effectivement embarqués et les notices correspondantes.

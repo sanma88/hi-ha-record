@@ -33,7 +33,7 @@
 		"docker:up": "turbo run docker:up",
 		"format": "bun run biome check --write",
 		"lint": "bun run biome lint",
-		"tauri:build": "dotenv -e .env -- bun run --cwd apps/desktop build:tauri --config src-tauri/tauri.prod.conf.json --verbose",
+		"tauri:build": "CAP_GPUI_DISABLED=1 dotenv -e .env -- bun run --cwd apps/desktop build:tauri --config src-tauri/tauri.prod.conf.json --verbose",
 		"typecheck": "bun run --cwd apps/web next typegen && bun run tsc -b",
 		"test": "turbo run test",
 		"test:web": "bun run --filter=@cap/web test",
