@@ -100,7 +100,7 @@ const MODEL_OPTIONS: ModelOption[] = [
 	},
 	{
 		name: "best-max",
-		label: "High Accuracy",
+		label: "Parakeet · High Accuracy",
 		modelName: "parakeet-tdt-0.6b-v3",
 		size: "~2.4GB",
 		description: "Larger download, higher accuracy",
@@ -118,6 +118,13 @@ const MODEL_OPTIONS: ModelOption[] = [
 		label: "Medium",
 		size: "1.5GB",
 		description: "Slower, more accurate",
+	},
+	{
+		name: "large-v3",
+		modelName: "whisper.cpp large-v3",
+		label: "Whisper Large v3 · High Accuracy",
+		size: "~3.1GB",
+		description: "Full multilingual model · longer processing time",
 	},
 ];
 

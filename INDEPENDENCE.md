@@ -11,6 +11,8 @@ Les seuls téléchargements de modèles configurés dans le moteur de sous-titre
 - [whisper.cpp](https://huggingface.co/ggerganov/whisper.cpp), révision `5359861c739e955e79d9a303bcbc70fb988958b1` ;
 - [parakeet-rs](https://huggingface.co/altunenes/parakeet-rs), révision `4d2a8bc71f5c896ec40faa59732e6716295edaf2`, dossier `tdt`.
 
+Depuis la version 0.6.4, le choix « Whisper Large v3 · High Accuracy » utilise le modèle multilingue complet `ggml-large-v3.bin` (3 095 033 483 octets) via whisper.cpp. Ce choix est distinct de « Parakeet · High Accuracy ». Les tailles de téléchargement sont fixées à celles des révisions ci-dessus ; les fichiers incomplets ne sont pas reconnus comme installés.
+
 Ces modèles sont téléchargés à la demande. Les enregistrements ne leur sont pas envoyés : le traitement est local. Les boutons de support et de versions ouvrent le dépôt GitHub Hi-Ha dans le navigateur.
 
 ## Mentions conservées

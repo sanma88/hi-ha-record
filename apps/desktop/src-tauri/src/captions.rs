@@ -2051,6 +2051,9 @@ async fn wait_for_model_download(key: &str) -> Result<(), String> {
 }
 
 async fn set_model_download_status(app: &AppHandle, key: &str, status: ModelDownloadStatus) {
+    if status.state == ModelDownloadState::Failed {
+        tracing::warn!(model = key, error = %status.message, "Model installation failed");
+    }
     let notify = {
         let mut downloads = MODEL_DOWNLOADS.lock().await;
         downloads.get_mut(key).map(|entry| {
@@ -2143,118 +2146,89 @@ pub async fn download_whisper_model(
     wait_for_model_download(&key).await
 }
 
+fn whisper_model_download(model_name: &str) -> Result<(String, u64), String> {
+    let size = match model_name {
+        "tiny" => 77_691_713,
+        "base" => 147_951_465,
+        "small" => 487_601_967,
+        "medium" => 1_533_763_059,
+        "large-v3" => 3_095_033_483,
+        _ => return Err(format!("Unsupported Whisper model: {model_name}")),
+    };
+    Ok((
+        format!(
+            "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-{model_name}.bin"
+        ),
+        size,
+    ))
+}
+
 async fn download_whisper_model_to_path(
     app: &AppHandle,
     model_name: &str,
     validated_path: &Path,
     download_key: &str,
 ) -> Result<(), String> {
-    let model_parts: &[&str] = match model_name {
-        "tiny" => &[
-            "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-tiny.bin",
-        ],
-        "base" => &[
-            "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-base.bin",
-        ],
-        "small" => &[
-            "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-small.bin",
-        ],
-        "medium" => &[
-            "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-medium.bin",
-        ],
-        _ => &[
-            "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-tiny.bin",
-        ],
-    };
-
+    let (url, total_size) = whisper_model_download(model_name)?;
     if let Some(parent) = validated_path.parent() {
         std::fs::create_dir_all(parent)
             .map_err(|e| format!("Failed to create parent directories: {e}"))?;
     }
 
     let http_client = app.state::<http_client::HttpClient>();
-    let total_size = total_content_length(&http_client, model_parts).await;
+    let response = http_client
+        .get(url)
+        .timeout(MODEL_DOWNLOAD_REQUEST_TIMEOUT)
+        .send()
+        .await
+        .map_err(|e| format!("Failed to download model: {e}"))?;
+    if !response.status().is_success() {
+        return Err(format!(
+            "Failed to download model: HTTP {}",
+            response.status()
+        ));
+    }
 
-    let mut file = tokio::fs::File::create(&validated_path)
+    let staging_path = validated_path.with_extension("bin.downloading");
+    let mut file = tokio::fs::File::create(&staging_path)
         .await
         .map_err(|e| format!("Failed to create file: {e}"))?;
-
-    let mut downloaded: u64 = 0;
-    let part_count = model_parts.len() as f64;
-
-    for (idx, url) in model_parts.iter().enumerate() {
-        let response = http_client
-            .get(*url)
-            .timeout(MODEL_DOWNLOAD_REQUEST_TIMEOUT)
-            .send()
+    let mut downloaded = 0_u64;
+    let mut last_progress_update = std::time::Instant::now();
+    let mut stream = response.bytes_stream();
+    while let Some(chunk_result) = stream.next().await {
+        let chunk = chunk_result.map_err(|e| format!("Error while downloading: {e}"))?;
+        file.write_all(&chunk)
             .await
-            .map_err(|e| format!("Failed to download model: {e}"))?;
-
-        if !response.status().is_success() {
-            return Err(format!(
-                "Failed to download model: HTTP {}",
-                response.status()
-            ));
-        }
-
-        let part_size = response.content_length().unwrap_or(0);
-        let mut downloaded_part: u64 = 0;
-        let mut stream = response.bytes_stream();
-        while let Some(chunk_result) = stream.next().await {
-            let chunk = chunk_result.map_err(|e| format!("Error while downloading: {e}"))?;
-
-            file.write_all(&chunk)
-                .await
-                .map_err(|e| format!("Error while writing to file: {e}"))?;
-
-            downloaded = downloaded.saturating_add(chunk.len() as u64);
-            downloaded_part = downloaded_part.saturating_add(chunk.len() as u64);
-
-            let progress = if total_size > 0 {
-                (downloaded as f64 / total_size as f64) * 100.0
-            } else if part_size > 0 {
-                ((idx as f64 + downloaded_part as f64 / part_size as f64) / part_count) * 100.0
-            } else {
-                (idx as f64 / part_count) * 100.0
-            };
-
+            .map_err(|e| format!("Error while writing to file: {e}"))?;
+        downloaded = downloaded.saturating_add(chunk.len() as u64);
+        if last_progress_update.elapsed() >= Duration::from_millis(200) {
+            let progress = model_transfer_progress(downloaded, total_size);
             set_model_download_progress(
                 app,
                 download_key,
                 progress,
-                format!("Downloading model: {progress:.0}%"),
+                format!("Downloading Whisper {model_name}: {progress:.0}%"),
             )
             .await;
+            last_progress_update = std::time::Instant::now();
         }
     }
-
     file.flush()
         .await
         .map_err(|e| format!("Failed to flush file: {e}"))?;
-
-    Ok(())
-}
-
-async fn total_content_length(client: &reqwest::Client, urls: &[&str]) -> u64 {
-    let mut total: u64 = 0;
-    for url in urls {
-        let Ok(resp) = client
-            .head(*url)
-            .timeout(Duration::from_secs(30))
-            .send()
-            .await
-        else {
-            return 0;
-        };
-        if !resp.status().is_success() {
-            return 0;
-        }
-        match resp.content_length() {
-            Some(size) => total = total.saturating_add(size),
-            None => return 0,
-        }
+    drop(file);
+    if downloaded != total_size {
+        return Err(format!(
+            "Incomplete model: expected {total_size} bytes, received {downloaded}"
+        ));
     }
-    total
+    tokio::fs::rename(&staging_path, validated_path)
+        .await
+        .map_err(|e| format!("Failed to install model: {e}"))?;
+    invalidate_whisper_cache_for_path(validated_path).await;
+    tracing::info!("Installed Whisper {model_name}: {downloaded} bytes");
+    Ok(())
 }
 
 #[tauri::command]
@@ -2262,7 +2236,12 @@ async fn total_content_length(client: &reqwest::Client, urls: &[&str]) -> u64 {
 #[instrument(skip(app))]
 pub async fn check_model_exists(app: AppHandle, model_path: String) -> Result<bool, String> {
     let validated_path = validate_model_path(&app, &model_path)?;
-    Ok(validated_path.exists())
+    let Some(name) = validated_path.file_stem().and_then(|name| name.to_str()) else {
+        return Ok(false);
+    };
+    let (_, expected_size) = whisper_model_download(name)?;
+    Ok(std::fs::metadata(&validated_path)
+        .is_ok_and(|meta| meta.is_file() && meta.len() == expected_size))
 }
 
 #[tauri::command]
@@ -2346,11 +2325,12 @@ const PARAKEET_MODEL_CLEANUP_FILES: &[&str] = &[
     "vocab.txt",
 ];
 
+// Sizes belong to the pinned Hugging Face revision above, including the unsplit data file.
 const PARAKEET_KNOWN_PART_SIZES: &[(&str, u64)] = &[
     ("encoder-model.int8.onnx", 652_183_999),
     ("decoder_joint-model.int8.onnx", 18_202_004),
     ("encoder-model.onnx", 41_770_866),
-    ("encoder-model.onnx.data", 1_300_000_000),
+    ("encoder-model.onnx.data", 2_435_420_160),
     ("decoder_joint-model.onnx", 72_520_893),
     ("vocab.txt", 93_939),
 ];
@@ -2386,38 +2366,27 @@ fn parakeet_staging_dir(validated_dir: &std::path::Path) -> PathBuf {
     ))
 }
 
-async fn parakeet_model_file_sizes(
-    http_client: &reqwest::Client,
+fn parakeet_model_file_sizes(
     model_files: &'static [(&'static str, &'static [&'static str])],
 ) -> Result<Vec<(&'static str, u64)>, String> {
-    let mut sizes = Vec::with_capacity(model_files.len());
-    for (filename, urls) in model_files {
-        let mut file_size = 0_u64;
-        for url in *urls {
-            let resp = http_client
-                .head(*url)
-                .timeout(Duration::from_secs(30))
-                .send()
-                .await
-                .map_err(|e| format!("Failed to get size for {filename}: {e}"))?;
+    model_files
+        .iter()
+        .map(|(filename, urls)| {
+            let size = urls.iter().try_fold(0_u64, |total, url| {
+                parakeet_known_part_size(url)
+                    .map(|size| total.saturating_add(size))
+                    .ok_or_else(|| format!("Missing pinned size for {filename}"))
+            })?;
+            Ok((*filename, size))
+        })
+        .collect()
+}
 
-            if !resp.status().is_success() {
-                return Err(format!(
-                    "Failed to get size for {filename}: HTTP {}",
-                    resp.status()
-                ));
-            }
-
-            let part_size = resp
-                .content_length()
-                .filter(|size| *size > 0)
-                .or_else(|| parakeet_known_part_size(url))
-                .unwrap_or(0);
-            file_size = file_size.saturating_add(part_size);
-        }
-        sizes.push((*filename, file_size));
+fn model_transfer_progress(downloaded: u64, total: u64) -> f64 {
+    if total == 0 {
+        return 0.0;
     }
-    Ok(sizes)
+    ((downloaded as f64 / total as f64) * 100.0).clamp(0.0, 99.0)
 }
 
 fn parakeet_model_files_match(dir: &std::path::Path, expected_files: &[(&str, u64)]) -> bool {
@@ -2426,7 +2395,7 @@ fn parakeet_model_files_match(dir: &std::path::Path, expected_files: &[(&str, u6
             return false;
         };
 
-        metadata.is_file() && (*expected_size == 0 || metadata.len() == *expected_size)
+        metadata.is_file() && *expected_size > 0 && metadata.len() == *expected_size
     })
 }
 
@@ -2503,7 +2472,7 @@ async fn download_parakeet_model_to_dir(
 
     let http_client = app.state::<http_client::HttpClient>();
     let model_files = parakeet_model_files_for_dir(validated_dir);
-    let expected_file_sizes = parakeet_model_file_sizes(&http_client, model_files).await?;
+    let expected_file_sizes = parakeet_model_file_sizes(model_files)?;
 
     let staging_dir = parakeet_staging_dir(validated_dir);
     if parakeet_model_files_match(&staging_dir, &expected_file_sizes) {
@@ -2525,9 +2494,10 @@ async fn download_parakeet_model_to_dir(
         .fold(0_u64, |acc, (_, size)| acc.saturating_add(*size));
 
     let mut downloaded_total: u64 = 0;
+    let mut last_progress_update = std::time::Instant::now();
 
     let download_result: Result<(), String> = async {
-        for (idx, (filename, urls)) in model_files.iter().enumerate() {
+        for (filename, urls) in model_files {
             let file_path = staging_dir.join(filename);
             let mut file = tokio::fs::File::create(&file_path)
                 .await
@@ -2560,19 +2530,17 @@ async fn download_parakeet_model_to_dir(
 
                     downloaded_total = downloaded_total.saturating_add(chunk.len() as u64);
 
-                    let progress = if total_size > 0 {
-                        (downloaded_total as f64 / total_size as f64) * 100.0
-                    } else {
-                        ((idx as f64 + 0.5) / model_files.len() as f64) * 100.0
-                    };
-
-                    set_model_download_progress(
-                        app,
-                        download_key,
-                        progress,
-                        format!("Downloading {filename}: {progress:.0}%"),
-                    )
-                    .await;
+                    if last_progress_update.elapsed() >= Duration::from_millis(200) {
+                        let progress = model_transfer_progress(downloaded_total, total_size);
+                        set_model_download_progress(
+                            app,
+                            download_key,
+                            progress,
+                            format!("Downloading {filename}: {progress:.0}%"),
+                        )
+                        .await;
+                        last_progress_update = std::time::Instant::now();
+                    }
                 }
             }
 
@@ -2592,7 +2560,9 @@ async fn download_parakeet_model_to_dir(
         return Err(e.clone());
     }
 
+    set_model_download_progress(app, download_key, 99.0, "Verifying model files".to_string()).await;
     if !parakeet_model_files_match(&staging_dir, &expected_file_sizes) {
+        tracing::warn!("Downloaded Parakeet model does not match pinned file sizes");
         let _ = std::fs::remove_dir_all(&staging_dir);
         return Err("Downloaded model files did not match expected sizes".to_string());
     }
@@ -2626,14 +2596,8 @@ pub async fn check_parakeet_model_exists(
         return Ok(false);
     }
 
-    let has_vocab = validated_dir.join("vocab.txt").exists();
-    let has_full_model = validated_dir.join("encoder-model.onnx").exists()
-        && validated_dir.join("encoder-model.onnx.data").exists()
-        && validated_dir.join("decoder_joint-model.onnx").exists();
-    let has_int8_model = validated_dir.join("encoder-model.int8.onnx").exists()
-        && validated_dir.join("decoder_joint-model.int8.onnx").exists();
-
-    Ok(has_vocab && (has_full_model || has_int8_model))
+    let expected_files = parakeet_model_file_sizes(parakeet_model_files_for_dir(&validated_dir))?;
+    Ok(parakeet_model_files_match(&validated_dir, &expected_files))
 }
 
 #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
@@ -2752,6 +2716,14 @@ mod tests {
             start: index as f32,
             end: index as f32 + 0.5,
         }
+    }
+
+    #[test]
+    fn whisper_large_v3_uses_full_model_and_rejects_unknown_names() {
+        let (url, size) = super::whisper_model_download("large-v3").unwrap();
+        assert!(url.ends_with("/ggml-large-v3.bin"));
+        assert_eq!(size, 3_095_033_483);
+        assert!(super::whisper_model_download("large-unknown").is_err());
     }
 
     #[test]
@@ -2884,6 +2856,63 @@ mod tests {
     mod parakeet {
         use super::super::parakeet_model_dir_matches;
         use tempfile::tempdir;
+
+        #[test]
+        fn parakeet_full_download_accepts_unsplit_data_and_rejects_old_part_size() {
+            use super::super::{
+                PARAKEET_TDT_FULL_MODEL_FILES, finalize_parakeet_model_download,
+                parakeet_model_file_sizes, parakeet_model_files_match,
+            };
+            let dir = tempdir().unwrap();
+            let staging = dir.path().join("staging");
+            let installed = dir.path().join("installed");
+            std::fs::create_dir(&staging).unwrap();
+            let expected = parakeet_model_file_sizes(PARAKEET_TDT_FULL_MODEL_FILES).unwrap();
+            assert_eq!(
+                expected.iter().map(|(_, size)| size).sum::<u64>(),
+                2_549_805_858
+            );
+            for (name, size) in &expected {
+                std::fs::File::create(staging.join(name))
+                    .unwrap()
+                    .set_len(*size)
+                    .unwrap();
+            }
+            assert!(parakeet_model_files_match(&staging, &expected));
+            let data = std::fs::OpenOptions::new()
+                .write(true)
+                .open(staging.join("encoder-model.onnx.data"))
+                .unwrap();
+            data.set_len(1_300_000_000).unwrap();
+            assert!(!parakeet_model_files_match(&staging, &expected));
+            data.set_len(2_435_420_160).unwrap();
+            finalize_parakeet_model_download(&installed, &staging, PARAKEET_TDT_FULL_MODEL_FILES)
+                .unwrap();
+            assert!(parakeet_model_files_match(&installed, &expected));
+            assert!(!staging.exists());
+            std::fs::remove_file(installed.join("vocab.txt")).unwrap();
+            assert!(!parakeet_model_files_match(&installed, &expected));
+        }
+
+        #[test]
+        fn parakeet_manifest_covers_both_models() {
+            use super::super::{PARAKEET_TDT_INT8_MODEL_FILES, parakeet_model_file_sizes};
+            let sizes = parakeet_model_file_sizes(PARAKEET_TDT_INT8_MODEL_FILES).unwrap();
+            assert_eq!(sizes.iter().map(|(_, size)| size).sum::<u64>(), 670_479_942);
+            assert!(
+                parakeet_model_file_sizes(&[("unknown", &["https://example.invalid/unknown"])])
+                    .is_err()
+            );
+        }
+
+        #[test]
+        fn parakeet_progress_reserves_completion_for_verified_installation() {
+            use super::super::model_transfer_progress;
+            assert!((model_transfer_progress(58, 100) - 58.0).abs() < 1e-10);
+            assert_eq!(model_transfer_progress(100, 100), 99.0);
+            assert_eq!(model_transfer_progress(200, 100), 99.0);
+            assert_eq!(model_transfer_progress(0, 0), 0.0);
+        }
 
         #[test]
         fn parakeet_model_dir_match_uses_full_directory_path() {
