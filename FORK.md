@@ -97,3 +97,15 @@ La version 0.6.3 autorise uniquement `ws://localhost:*` et `ws://127.0.0.1:*` po
 Validation : un test WebKit avec serveur WebSocket éphémère reproduit la `SecurityError` avec l’ancienne CSP sur les deux adresses, reçoit une trame avec la nouvelle CSP, et vérifie qu’une adresse externe reste bloquée. Les trois tests de l’édition locale passent. Les pistes écran et caméra d’un enregistrement réel de 7 secondes se décodent ; l’exporteur livré produit un MP4 de 7,3 secondes dont les pistes H.264/AAC sont également décodées sans erreur. Aucun enregistrement personnel n’est joint au dépôt ni à la release.
 
 Distribution 0.6.3 : sources `ac8cd9a54d724a346197f30e898d262964245c56`, notarisation Apple acceptée (`dd4d4e95-aeaa-4349-afa9-0cc4ba161a78`), ticket joint et Gatekeeper validé pour l’application et le DMG. Empreinte SHA-256 du DMG `Hi-Ha-Record-0.6.3-arm64.dmg` : `b20748d007511915f94a802d84aad2c24a5112b628c7f3cccef1766ab0310cda`.
+
+## Modèles de sous-titres — 0.6.4
+
+Le fichier complet `encoder-model.onnx.data` était comparé à une ancienne taille de fragment de 1 300 000 000 octets, au lieu de 2 435 420 160 octets. La récupération de taille par HEAD pouvait revenir à cette valeur de secours, ce qui faussait la progression et rejetait le téléchargement terminé. Les tailles proviennent maintenant exclusivement des révisions épinglées et ont été comparées aux métadonnées Hugging Face pour les onze fichiers Whisper et Parakeet utilisés.
+
+La progression des transferts est limitée à cinq mises à jour par seconde et à 99 % avant installation. Les fichiers incomplets ne sont plus reconnus comme des modèles installés. Whisper télécharge dans un fichier temporaire, contrôle sa taille et le renomme une fois complet. Les échecs d’installation sont désormais journalisés.
+
+Le choix « Whisper Large v3 · High Accuracy » utilise le modèle multilingue complet via whisper.cpp (3 095 033 483 octets), sans remplacement silencieux par un petit modèle. Parakeet reste disponible et est identifié explicitement dans le menu.
+
+Validation : 14 tests natifs ciblés réussis, `cargo check -p cap-desktop`, formatage Rust, TypeScript desktop et Biome ciblé réussis. Le modèle Large v3 téléchargé a l’empreinte SHA-256 officielle `64d182b440b98d5203c4f9bd541544d84c605196c4f7b845dfa11fb23594d1e2`. Une transcription réelle avec ce modèle a terminé dans l’application et le mainteneur a confirmé l’apparition des sous-titres. Les vidéos et modèles locaux ne sont pas joints aux sources.
+
+Distribution : sources `78fa5de1b15b0256228007deab701b99fb35dfa8`, signature Developer ID Pixinko, notarisation Apple acceptée le 29 septembre 2026 (`faaea4d6-da9a-4dc5-9938-2e04e0605e42`). Ticket joint au DMG et à l’application installée ; Gatekeeper accepte les deux. DMG `Hi-Ha-Record-0.6.4-arm64.dmg`, SHA-256 `f8d3e94fabcb4b87ea9b476cfff87081f995f3da8668e2c9a60dcece69a4d8ed`.

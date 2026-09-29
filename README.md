@@ -6,20 +6,20 @@ Application macOS pour enregistrer, monter et exporter des vidéos de formation.
 
 ## État
 
-L’interface porte le nom **Hi-Ha Record**, sans point, avec le logo cheval, la police Inter et la palette claire/sombre de Hi-Ha Voice. La compilation native Mac Apple Silicon, la compilation de l’interface et la vérification TypeScript ont réussi. Le DMG **0.6.3 pour Apple Silicon** est signé **Developer ID Application: Pixinko (85RMV67598)** et **notarié par Apple**. L’application et le DMG sont acceptés par Gatekeeper. Il remplace le premier DMG 0.6.0 signé ad hoc. Un export MP4 H.264/AAC issu d’un enregistrement réel a été vérifié. La validation complète du parcours dans l’interface native reste à terminer.
+L’interface porte le nom **Hi-Ha Record**, sans point, avec le logo cheval, la police Inter et la palette claire/sombre de Hi-Ha Voice. La compilation native Mac Apple Silicon, la compilation de l’interface et la vérification TypeScript ont réussi. Le DMG **0.6.4 pour Apple Silicon** est signé **Developer ID Application: Pixinko (85RMV67598)** et **notarié par Apple**. L’application et le DMG sont acceptés par Gatekeeper. Il remplace le premier DMG 0.6.0 signé ad hoc. Un export MP4 H.264/AAC issu d’un enregistrement réel a été vérifié. Les aperçus caméra et vidéo ont été confirmés dans l’application ; une transcription réelle avec Whisper Large v3 a également réussi.
 
 Le parcours local ne demande pas de licence commerciale Hi-Ha Record. Les pages d’achat et d’activation ont été remplacées par « À propos et licences ». Les mises à jour officielles de Cap sont désactivées pour les identifiants de cette application. Le mode Studio est sélectionné par défaut ; le sélecteur principal propose Studio et capture d’écran.
 
-L’édition 0.6.3 fonctionne sans compte ni service cloud Cap. Les appels à leur API, la télémétrie et les rapports Sentry sont désactivés. Les modèles de sous-titres sont téléchargés à la demande depuis leurs sources indépendantes sur Hugging Face, puis utilisés localement. Le monorepo conserve les sources web et GPUI amont pour traçabilité ; elles ne constituent pas une offre commerciale Hi-Ha. L’interface native GPUI expérimentale est désactivée dans cette édition.
+L’édition 0.6.4 fonctionne sans compte ni service cloud Cap. Les appels à leur API, la télémétrie et les rapports Sentry sont désactivés. Les modèles de sous-titres sont téléchargés à la demande depuis leurs sources indépendantes sur Hugging Face, puis utilisés localement. Le monorepo conserve les sources web et GPUI amont pour traçabilité ; elles ne constituent pas une offre commerciale Hi-Ha. L’interface native GPUI expérimentale est désactivée dans cette édition.
 
-La version 0.6.3 corrige l’erreur « The operation is insecure » qui empêchait les aperçus caméra et l’ouverture de l’éditeur en 0.6.2.
+La version 0.6.4 corrige les téléchargements de modèles rejetés malgré leur achèvement et ajoute **Whisper Large v3 · High Accuracy** (modèle complet multilingue, environ 3,1 Go, exécuté localement via whisper.cpp). Le choix **Parakeet · High Accuracy** reste disponible séparément. Le correctif des aperçus vidéo de la version 0.6.3 est conservé.
 
 ## Télécharger
 
-- [Hi-Ha Record 0.6.3 — DMG pour Mac Apple Silicon](https://github.com/sanma88/hi-ha-record/releases/download/v0.6.3/Hi-Ha-Record-0.6.3-arm64.dmg)
-- [Sources exactes de la version 0.6.3](https://github.com/sanma88/hi-ha-record/releases/download/v0.6.3/Hi-Ha-Record-0.6.3-source.tar.gz)
-- [Empreintes SHA-256](https://github.com/sanma88/hi-ha-record/releases/download/v0.6.3/SHA256SUMS.txt)
-- [Notes de version et installation](https://github.com/sanma88/hi-ha-record/releases/tag/v0.6.3)
+- [Hi-Ha Record 0.6.4 — DMG pour Mac Apple Silicon](https://github.com/sanma88/hi-ha-record/releases/download/v0.6.4/Hi-Ha-Record-0.6.4-arm64.dmg)
+- [Sources exactes de la version 0.6.4](https://github.com/sanma88/hi-ha-record/releases/download/v0.6.4/Hi-Ha-Record-0.6.4-source.tar.gz)
+- [Empreintes SHA-256](https://github.com/sanma88/hi-ha-record/releases/download/v0.6.4/SHA256SUMS.txt)
+- [Notes de version et installation](https://github.com/sanma88/hi-ha-record/releases/tag/v0.6.4)
 
 Pour proposer l’application sur un autre site, proposer également les sources correspondantes et conserver les notices légales.
 
